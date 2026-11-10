@@ -4,7 +4,7 @@ import { fieldErrors, rsvpSchema, wishSchema, type FormState } from './validatio
 const CODE = /^[a-z0-9]{6}$/
 const FAILED = 'Gagal mengirim, coba lagi'
 
-type InsertResult = Promise<{ error: unknown }>
+type InsertResult = PromiseLike<{ error: unknown }>
 
 const str = (fd: FormData, key: string) => String(fd.get(key) ?? '')
 
