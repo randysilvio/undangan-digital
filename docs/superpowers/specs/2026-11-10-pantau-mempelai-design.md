@@ -40,7 +40,10 @@ tidak perlu bertanya ke admin.
 | `created_at` | timestamptz, not null, default `now()` | |
 
 - RLS aktif; satu policy `admin_all` (sama dengan tabel lain): akses penuh hanya untuk `is_admin()`.
-- **Tidak ada** grant untuk `anon`. `authenticated` mendapat grant seperti tabel lain (dibatasi RLS).
+- **Tidak ada** grant untuk `anon`. Default privileges Supabase memberi hak ke `anon` pada tabel baru,
+  jadi migrasi wajib `revoke all ... from anon` secara eksplisit. `authenticated` mendapat
+  `select, insert, update, delete` (dibatasi RLS), karena grant di migrasi awal hanya berlaku untuk
+  tabel yang sudah ada saat itu.
 - Satu undangan maksimal satu link (primary key). Tidak ada baris = link mati.
 - Kode disimpan apa adanya (tidak di-hash) agar admin bisa menyalinnya lagi kapan saja. Bila database
   bocor, yang terbuka hanya akses ke 4 angka.
@@ -64,6 +67,7 @@ Mengembalikan **nol baris** bila kode tidak ditemukan. Bila ditemukan, satu bari
 | `timezone` | zona waktu undangan |
 | `status` | `draft` / `published` |
 | `hadir`, `tidak`, `ragu`, `total_orang` | integer |
+| `generated_at` | `now()`; dipakai untuk baris "Diperbarui", sehingga halaman tidak memanggil `new Date()` saat render |
 
 Aturan hitung harus identik dengan `summarizeRsvps` di `src/lib/rsvp.ts`:
 - Kunci responden: `'kode:' || guest_code` bila `guest_code` tidak null, selain itu
@@ -122,8 +126,7 @@ pantau: undangan hasil duplikat mulai tanpa link. Fungsi data di `src/lib/data/a
 | Keadaan | Hasil |
 |---|---|
 | Kode salah format / tidak ada / sudah dimatikan | Halaman "Link tidak berlaku" |
-| Database gagal saat muat pertama | `error.tsx` yang sudah ada |
-| Database gagal saat penyegaran otomatis | Angka lama tetap tampil; dicoba lagi di siklus berikutnya |
+| Database gagal (saat dibuka atau saat penyegaran otomatis) | Pesan "Sedang ada gangguan, mencoba lagi otomatis…"; penyegaran tetap berjalan sehingga halaman pulih sendiri. Tidak memakai `error.tsx`, karena error boundary akan menghentikan penyegaran |
 | Aksi admin gagal (buat/matikan) | Pesan galat di kotak, pola `Notice` yang sudah ada |
 | Undangan dihapus | Baris link ikut terhapus (cascade), link tidak berlaku |
 
