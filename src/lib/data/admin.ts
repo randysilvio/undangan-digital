@@ -145,6 +145,23 @@ export async function setWishHidden(sb: SupabaseClient, invitationId: string, wi
   return error ? fail(error) : ok(null)
 }
 
+/** Kode link pantau mempelai, atau null bila belum dibuat/dimatikan. */
+export async function getMonitorLink(sb: SupabaseClient, invitationId: string): Promise<string | null> {
+  const { data, error } = await sb.from('invitation_monitor_links').select('token').eq('invitation_id', invitationId).maybeSingle()
+  if (error) throw error
+  return data?.token ?? null
+}
+
+export async function upsertMonitorLink(sb: SupabaseClient, invitationId: string, token: string): Promise<Result<null>> {
+  const { error } = await sb.from('invitation_monitor_links').upsert({ invitation_id: invitationId, token }, { onConflict: 'invitation_id' })
+  return error ? fail(error) : ok(null)
+}
+
+export async function deleteMonitorLink(sb: SupabaseClient, invitationId: string): Promise<Result<null>> {
+  const { error } = await sb.from('invitation_monitor_links').delete().eq('invitation_id', invitationId)
+  return error ? fail(error) : ok(null)
+}
+
 export async function setStatus(sb: SupabaseClient, id: string, status: InvitationStatus): Promise<Result<null>> {
   const { error } = await sb.from('invitations').update({ status }).eq('id', id)
   return error ? fail(error) : ok(null)

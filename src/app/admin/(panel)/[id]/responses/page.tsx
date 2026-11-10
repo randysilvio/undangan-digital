@@ -1,11 +1,14 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
+import { MonitorLinkCard } from '@/components/admin/MonitorLinkCard'
 import { Card, secondaryButtonClass } from '@/components/admin/ui'
 import { WishToggle } from '@/components/admin/WishToggle'
 import { requireAdmin } from '@/lib/auth'
 import { ATTENDANCE_LABEL } from '@/lib/csv'
-import { getInvitation, listAllWishes, listRsvps } from '@/lib/data/admin'
+import { getInvitation, getMonitorLink, listAllWishes, listRsvps } from '@/lib/data/admin'
+import { monitorLink } from '@/lib/monitor'
 import { latestRsvps, summarizeRsvps } from '@/lib/rsvp'
+import { SITE_URL } from '@/lib/supabase/env'
 import { formatTimestamp } from '@/lib/time'
 
 export default function ResponsesPage(props: PageProps<'/admin/[id]/responses'>) {
@@ -19,7 +22,12 @@ export default function ResponsesPage(props: PageProps<'/admin/[id]/responses'>)
 async function Responses({ params }: PageProps<'/admin/[id]/responses'>) {
   const { id } = await params
   const { supabase } = await requireAdmin()
-  const [inv, rsvps, wishes] = await Promise.all([getInvitation(supabase, id), listRsvps(supabase, id), listAllWishes(supabase, id)])
+  const [inv, rsvps, wishes, token] = await Promise.all([
+    getInvitation(supabase, id),
+    listRsvps(supabase, id),
+    listAllWishes(supabase, id),
+    getMonitorLink(supabase, id),
+  ])
   if (!inv) notFound()
   const summary = summarizeRsvps(rsvps)
   const latest = new Set(latestRsvps(rsvps).map((r) => r.id))
@@ -33,6 +41,12 @@ async function Responses({ params }: PageProps<'/admin/[id]/responses'>) {
 
   return (
     <div className="space-y-6">
+      <MonitorLinkCard
+        invitationId={inv.id}
+        link={token ? monitorLink(SITE_URL, token) : null}
+        coupleName={` & ${inv.bride_nickname}`}
+      />
+
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map(([label, value]) => (
           <div key={label} className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
