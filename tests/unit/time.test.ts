@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { eventInstant, formatJam, formatTanggal, timeLeft } from '@/lib/time'
+import { eventInstant, formatClock, formatJam, formatTanggal, timeLeft } from '@/lib/time'
+
+describe('formatClock', () => {
+  it('memakai zona undangan', () => {
+    expect(formatClock('2026-11-10T05:42:00Z', 'Asia/Jayapura')).toBe('14.42 WIT')
+    expect(formatClock('2026-11-10T05:42:00Z', 'Asia/Jakarta')).toBe('12.42 WIB')
+    expect(formatClock('2026-11-10T16:05:00Z', 'Asia/Makassar')).toBe('00.05 WITA')
+  })
+})
 
 describe('eventInstant', () => {
   it('memakai offset WIT (+9)', () => {

@@ -51,6 +51,13 @@ export function formatJam(time: string, tz: TimeZoneId): string {
   return `${time.slice(0, 5).replace(':', '.')} ${TIMEZONES[tz].label}`
 }
 
+/** "HH.mm WIT" dari timestamp ISO, di zona undangan. */
+export function formatClock(iso: string, tz: TimeZoneId): string {
+  const t = new Date(new Date(iso).getTime() + TIMEZONES[tz].offsetHours * 3600_000)
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${p(t.getUTCHours())}.${p(t.getUTCMinutes())} ${TIMEZONES[tz].label}`
+}
+
 /** "dd/MM/yyyy HH.mm" dari timestamp ISO, di zona undangan. */
 export function formatTimestamp(iso: string, tz: TimeZoneId): string {
   const t = new Date(new Date(iso).getTime() + TIMEZONES[tz].offsetHours * 3600_000)
