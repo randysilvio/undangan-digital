@@ -70,15 +70,17 @@ Semua layanan di sini **gratis**.
 
 1. Buka <https://vercel.com> → **Sign Up** → **Continue with GitHub** (akun randysilvio). Pilih paket **Hobby** (gratis).
 2. Klik **Add New…** → **Project** → pilih repo `undangan-digital` → **Import**.
-3. Buka bagian **Environment Variables** dan tambahkan **hanya** 3 variabel berikut:
+3. Buka bagian **Environment Variables** dan tambahkan **hanya** 2 variabel berikut:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_SITE_URL`: isi sementara `https://undangan-digital.vercel.app`
+
+   `NEXT_PUBLIC_SITE_URL` **tidak perlu** diisi: link tamu & link pantau otomatis memakai alamat
+   produksi dari Vercel. Jangan menebak alamat seperti `undangan-digital.vercel.app`, karena alamat
+   itu bisa saja milik orang lain.
+   Jangan klik **Add** pada integrasi Supabase yang ditawarkan Vercel.
 4. Klik **Deploy** dan tunggu ±2 menit.
-5. Setelah selesai, salin alamat yang diberikan Vercel (misalnya `https://undangan-digital-xxxx.vercel.app`).
-   - Bila berbeda dari isian `NEXT_PUBLIC_SITE_URL`, buka **Settings → Environment Variables**,
-     ubah `NEXT_PUBLIC_SITE_URL` ke alamat tersebut.
-   - Lalu buka **Deployments** → titik tiga pada deployment teratas → **Redeploy**.
+5. Klik **Continue to Project**. Alamat web Anda ada di bagian **Domains** (misalnya
+   `https://undangan-digital-xxxx.vercel.app`).
 6. Buka `https://alamat-anda.vercel.app/admin` dan masuk dengan akun admin.
 
 Setiap kali kode baru di-push ke GitHub, Vercel otomatis memperbarui web.
