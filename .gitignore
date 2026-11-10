@@ -1,20 +1,28 @@
 # dependencies
-node_modules/
+/node_modules
+/.pnp
+.pnp.*
 
 # build output
-.next/
-out/
-dist/
+/.next/
+/out/
+/build
+*.tsbuildinfo
+next-env.d.ts
 
 # env & secrets
-.env
-.env*.local
+.env*
+!.env.example
+*.pem
+
+# testing
+/coverage
+/playwright-report/
+/test-results/
 
 # misc
 .DS_Store
 Thumbs.db
 *.log
-.vercel/
-coverage/
-playwright-report/
-test-results/
+.vercel
+.superpowers/
