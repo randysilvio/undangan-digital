@@ -120,6 +120,17 @@ Setiap kali kode baru di-push ke GitHub, Vercel otomatis memperbarui web.
 
    ![Rekap RSVP](img/06-rekap.png)
 
+8. **Link pantau untuk mempelai.** Mempelai bisa melihat rekap kehadiran sendiri tanpa login:
+   - Di tab **RSVP & Ucapan**, pada kotak **Link Pantau Mempelai**, klik **Buat link**.
+   - Klik **Kirim WA** lalu pilih kontak mempelai, atau **Salin** untuk dikirim lewat jalur lain.
+     Satu link dipakai bersama kedua mempelai.
+   - Mempelai hanya melihat angka (Hadir, Tidak Hadir, Masih Ragu, Total Orang). Nama dan nomor tamu
+     tidak ditampilkan. Angka menyegarkan sendiri tiap menit selama halaman dibuka.
+   - Bila link tersebar ke orang lain, klik **Buat ulang**: link lama langsung mati, lalu kirim link
+     baru ke mempelai. **Matikan** menutup akses sepenuhnya.
+
+   ![Halaman pantau mempelai](img/07-pantau.png)
+
 **Tips:**
 - Tombol **Duplikat** menyalin undangan (tanpa tamu & RSVP). Ini memudahkan membuat undangan klien
   berikutnya dengan susunan yang sama.

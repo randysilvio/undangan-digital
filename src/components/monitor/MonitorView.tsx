@@ -34,7 +34,8 @@ export function MonitorView({ summary: s }: { summary: MonitorSummary }) {
         {stats.map(([label, value]) => (
           <div key={label} className="rounded-2xl border border-inv-line bg-inv-surface p-4">
             <p className="text-sm text-inv-muted">{label}</p>
-            <p className="font-heading text-4xl tabular-nums">{value}</p>
+            {/* Font isi + angka tegak: angka gaya lama Cormorant membuat 1 mirip I dan 0 mirip O. */}
+            <p className="font-body text-4xl font-semibold lining-nums tabular-nums">{value}</p>
           </div>
         ))}
       </div>

@@ -85,4 +85,22 @@ test('admin membuat undangan, tamu RSVP & ucapan, admin melihat rekap', async ({
   await expect(admin.getByRole('cell', { name: 'Pak Tes' })).toBeVisible()
   await expect(admin.getByText('Total Orang').locator('..')).toContainText('2')
   await admin.screenshot(shot('06-rekap'))
+
+  // ── Link pantau mempelai (layar HP 360px) ──
+  await admin.getByRole('button', { name: 'Buat link' }).click()
+  const monitorText = admin.getByText(/\/pantau\/[A-Za-z0-9_-]{32}$/)
+  await expect(monitorText).toBeVisible()
+  const monitorUrl = (await monitorText.textContent())!
+  const couple = await browser.newPage()
+  await couple.goto(new URL(monitorUrl).pathname)
+  await expect(couple.getByText('Rekap Kehadiran Tamu')).toBeVisible()
+  await expect(couple.getByText('Hadir', { exact: true }).locator('..')).toContainText('1')
+  await expect(couple.getByText('Total Orang').locator('..')).toContainText('2')
+  await couple.screenshot(shot('07-pantau'))
+
+  admin.once('dialog', (d) => void d.accept())
+  await admin.getByRole('button', { name: 'Buat ulang' }).click()
+  await expect(admin.getByText(monitorUrl, { exact: true })).toBeHidden()
+  await couple.reload()
+  await expect(couple.getByText('Link tidak berlaku').first()).toBeVisible()
 })

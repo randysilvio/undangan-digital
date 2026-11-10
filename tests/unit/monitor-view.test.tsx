@@ -26,6 +26,13 @@ describe('MonitorView', () => {
     for (const text of ['Hadir', 'Tidak Hadir', 'Masih Ragu', 'Total Orang', '>48<', '>12<', '>5<', '>97<']) expect(out).toContain(text)
   })
 
+  it('angka memakai font isi dengan angka tegak (Cormorant: 1 mirip I, 0 mirip O)', () => {
+    const value = html().match(/<p class="([^"]*)">48<\/p>/)?.[1] ?? ''
+    expect(value).toContain('font-body')
+    expect(value).toContain('lining-nums')
+    expect(value).not.toContain('font-heading')
+  })
+
   it('data-theme mengikuti tema', () => {
     expect(html({ theme: 'modern' })).toContain('data-theme="modern"')
   })
