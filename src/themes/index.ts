@@ -17,4 +17,11 @@ export const THEMES: Record<ThemeName, ThemeConfig> = {
     headingFont: 'var(--font-cormorant)',
     bodyFont: 'var(--font-lato)',
   },
+  modern: {
+    name: 'modern',
+    label: 'Modern',
+    description: 'Putih bersih dan abu gelap, huruf sans-serif',
+    headingFont: 'var(--font-montserrat)',
+    bodyFont: 'var(--font-inter)',
+  },
 }

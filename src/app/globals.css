@@ -30,6 +30,35 @@
   --inv-cover-overlay: linear-gradient(to bottom, rgb(61 51 41 / 0.35), rgb(61 51 41 / 0.7));
 }
 
+/* Tema Modern: putih bersih, sans-serif */
+[data-theme="modern"] {
+  --inv-bg: #ffffff;
+  --inv-surface: #f3f4f6;
+  --inv-text: #1f2937;
+  --inv-muted: #6b7280;
+  --inv-accent: #1f2937;
+  --inv-on-accent: #ffffff;
+  --inv-line: #e5e7eb;
+  --inv-heading: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --inv-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --inv-names: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --inv-cover-overlay: linear-gradient(to bottom, rgb(17 24 39 / 0.45), rgb(17 24 39 / 0.8));
+}
+
+/* Nama di tema Modern: huruf kapital renggang, bukan huruf sambung */
+[data-theme="modern"] .font-names {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+[data-theme="modern"] h1.font-names {
+  font-size: 2.25rem;
+  line-height: 2.75rem;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
