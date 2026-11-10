@@ -20,6 +20,9 @@ const validInv = {
   bride_nickname: 'Ani',
   bride_parents: '',
   opening_text: '',
+  intro_text: 'Dengan sukacita kami bermaksud melangsungkan pernikahan:',
+  closing_text: 'Tuhan Yesus memberkati.',
+  wa_message: 'Shalom {tamu}, undangan {mempelai}: {link}',
 }
 
 const validEvent = {
@@ -88,6 +91,46 @@ describe('invitationSchema', () => {
   })
   it('nama panggilan wajib', () => {
     expect(errs(invitationSchema.safeParse({ ...validInv, bride_nickname: '' })).bride_nickname).toBe('Wajib diisi')
+  })
+})
+
+describe('invitationSchema: teks undangan', () => {
+  it('pengantar dan penutup wajib diisi', () => {
+    const e = errs(invitationSchema.safeParse({ ...validInv, intro_text: '  ', closing_text: '' }))
+    expect(e.intro_text).toBe('Kalimat pengantar wajib diisi')
+    expect(e.closing_text).toBe('Kalimat penutup wajib diisi')
+  })
+
+  it('pesan WA wajib memuat {link}', () => {
+    expect(errs(invitationSchema.safeParse({ ...validInv, wa_message: 'Halo {tamu}' })).wa_message).toBe(
+      'Pesan WhatsApp harus memuat kode {link} agar tamu menerima link undangan',
+    )
+    expect(errs(invitationSchema.safeParse({ ...validInv, wa_message: '' })).wa_message).toBe('Pesan WhatsApp wajib diisi')
+  })
+
+  it('batas panjang: pengantar & penutup 500, pesan WA 1500', () => {
+    const e = errs(
+      invitationSchema.safeParse({ ...validInv, intro_text: 'a'.repeat(501), closing_text: 'a'.repeat(501), wa_message: '{link}' + 'a'.repeat(1495) }),
+    )
+    expect(Object.keys(e).sort()).toEqual(['closing_text', 'intro_text', 'wa_message'])
+  })
+
+  // Browser mengirim isi textarea dengan akhir baris CRLF; simpan sebagai LF agar sama dengan template.
+  it('akhir baris CRLF dari browser disimpan sebagai LF', () => {
+    const d = invitationSchema.parse({
+      ...validInv,
+      intro_text: 'a\r\nb',
+      opening_text: 'c\r\nd',
+      closing_text: 'e\r\nf',
+      wa_message: 'Shalom,\r\n{link}',
+    })
+    expect([d.intro_text, d.opening_text, d.closing_text, d.wa_message]).toEqual(['a\nb', 'c\nd', 'e\nf', 'Shalom,\n{link}'])
+  })
+
+  it('teks valid dirapikan spasi tepinya dan disimpan apa adanya', () => {
+    const d = invitationSchema.parse({ ...validInv, intro_text: '  Pengantar  ' })
+    expect(d.intro_text).toBe('Pengantar')
+    expect(d.wa_message).toBe(validInv.wa_message)
   })
 })
 

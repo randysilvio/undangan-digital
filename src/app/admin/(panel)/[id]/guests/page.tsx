@@ -7,6 +7,7 @@ import { CopyButton } from '@/components/invitation/CopyButton'
 import { requireAdmin } from '@/lib/auth'
 import { getInvitation, listGuests } from '@/lib/data/admin'
 import { SITE_URL } from '@/lib/supabase/env'
+import { effectiveTexts } from '@/lib/text-templates'
 
 export default function GuestsPage(props: PageProps<'/admin/[id]/guests'>) {
   return (
@@ -43,6 +44,7 @@ async function Guests({ params }: PageProps<'/admin/[id]/guests'>) {
           slug={inv.slug}
           coupleName={`${inv.groom_nickname} & ${inv.bride_nickname}`}
           siteUrl={SITE_URL}
+          waTemplate={effectiveTexts(inv).wa}
           guests={guests}
         />
       </Card>

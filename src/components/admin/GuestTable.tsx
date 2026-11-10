@@ -3,7 +3,8 @@
 import { useMemo, useState, useTransition } from 'react'
 import { deleteGuestAction } from '@/app/admin/(panel)/guest-actions'
 import { CopyButton } from '@/components/invitation/CopyButton'
-import { guestLink, waMessage, waShareUrl } from '@/lib/links'
+import { guestLink, waShareUrl } from '@/lib/links'
+import { fillWaMessage } from '@/lib/text-templates'
 import type { Guest } from '@/lib/types'
 import { dangerButtonClass, inputClass, secondaryButtonClass } from './ui'
 
@@ -12,10 +13,12 @@ interface GuestTableProps {
   slug: string
   coupleName: string
   siteUrl: string
+  /** Pesan WA undangan dengan kode {tamu}, {mempelai}, {link}. */
+  waTemplate: string
   guests: Guest[]
 }
 
-export function GuestTable({ invitationId, slug, coupleName, siteUrl, guests }: GuestTableProps) {
+export function GuestTable({ invitationId, slug, coupleName, siteUrl, waTemplate, guests }: GuestTableProps) {
   const [q, setQ] = useState('')
   const [, startTransition] = useTransition()
   const shown = useMemo(() => {
@@ -47,7 +50,7 @@ export function GuestTable({ invitationId, slug, coupleName, siteUrl, guests }: 
               <div className="flex shrink-0 flex-wrap gap-2">
                 <CopyButton text={link} label="Salin link" className={secondaryButtonClass} />
                 <a
-                  href={waShareUrl(g.phone, waMessage({ guestName: g.name, coupleName, link }))}
+                  href={waShareUrl(g.phone, fillWaMessage(waTemplate, { guestName: g.name, coupleName, link }))}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`${secondaryButtonClass} border-green-300 text-green-800 hover:bg-green-50`}

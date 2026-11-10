@@ -3,11 +3,13 @@
 import { startTransition, useActionState, useState, type FormEvent } from 'react'
 import { saveInvitationAction } from '@/app/admin/(panel)/actions'
 import { slugify } from '@/lib/slug'
+import { effectiveTexts } from '@/lib/text-templates'
 import { TIMEZONES } from '@/lib/time'
 import type { InvitationFull } from '@/lib/types'
 import { initialFormState } from '@/lib/validation'
 import { THEMES } from '@/themes'
 import { EventsEditor, eventsPayload, newEventDraft, type EventDraft } from './EventsEditor'
+import { TextsEditor } from './TextsEditor'
 import { buttonClass, Card, Field, inputClass, Notice } from './ui'
 
 export function InvitationForm({ invitation, siteUrl }: { invitation?: InvitationFull; siteUrl: string }) {
@@ -140,10 +142,8 @@ export function InvitationForm({ invitation, siteUrl }: { invitation?: Invitatio
         </div>
       </Card>
 
-      <Card title="Kata Pembuka">
-        <Field label="Ayat / kutipan (opsional)" error={e.opening_text} hint="Tampil setelah sampul. Maksimal 1000 karakter.">
-          <textarea name="opening_text" rows={4} defaultValue={invitation?.opening_text ?? ''} className={inputClass} />
-        </Field>
+      <Card title="Teks Undangan">
+        <TextsEditor initial={invitation ? effectiveTexts(invitation) : undefined} errors={e} />
       </Card>
 
       <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center gap-3 border-t border-stone-200 bg-stone-100/95 px-4 py-3 backdrop-blur">

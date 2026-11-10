@@ -27,6 +27,17 @@ describe('InvitationView', () => {
   it('menyembunyikan amplop bila kosong', () => {
     expect(html({ gifts: [] })).not.toContain('data-section="amplop"')
   })
+  it('memakai kalimat pengantar & penutup milik undangan', () => {
+    const out = html({ intro_text: 'Atas kasih karunia Tuhan Yesus <b>Kristus</b>', closing_text: 'Tuhan Yesus memberkati.' })
+    expect(out).toContain('Atas kasih karunia Tuhan Yesus &lt;b&gt;Kristus&lt;/b&gt;')
+    expect(out).toContain('Tuhan Yesus memberkati.')
+    expect(out).not.toContain('ridho Tuhan Yang Maha Esa')
+  })
+  it('undangan lama (teks kosong) tetap memakai teks Umum', () => {
+    const out = html({ intro_text: null, closing_text: null })
+    expect(out).toContain('Dengan memohon rahmat dan ridho Tuhan Yang Maha Esa, kami bermaksud menyelenggarakan pernikahan:')
+    expect(out).toContain('Merupakan suatu kebahagiaan dan kehormatan bagi kami')
+  })
   it('menyembunyikan pembuka bila kosong', () => {
     expect(html({ opening_text: null })).not.toContain('data-section="pembuka"')
   })

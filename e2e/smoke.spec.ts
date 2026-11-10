@@ -44,9 +44,18 @@ test('admin membuat undangan, tamu RSVP & ucapan, admin melihat rekap', async ({
   await acara.getByLabel('Alamat').fill('Jl. Pengujian 1')
   await acara.getByLabel('Tanggal').scrollIntoViewIfNeeded()
   await admin.screenshot(shot('03-acara'))
+
+  // Template teks Kristen (undangan baru mulai dari Umum).
+  await expect(admin.getByLabel('Kalimat pengantar')).toHaveValue(/ridho Tuhan Yang Maha Esa/)
+  await admin.getByLabel('Template teks').selectOption('kristen')
+  await admin.getByRole('button', { name: 'Terapkan template' }).click()
+  await expect(admin.getByLabel('Kalimat pengantar')).toHaveValue(/Tuhan Yesus Kristus/)
   await admin.getByRole('button', { name: 'Buat Undangan' }).click()
 
   await expect(admin).toHaveURL(/\/admin\/[0-9a-f-]+\/edit\?baru=1/)
+  // Teks tersimpan persis sama dengan template (CRLF dari browser diseragamkan), jadi dikenali lagi.
+  // Next 16 menyimpan formulir "Buat Undangan" sebelumnya dalam keadaan tersembunyi (untuk Back).
+  await expect(admin.getByLabel('Template teks').filter({ visible: true })).toHaveValue('kristen')
   await admin.getByRole('button', { name: 'Terbitkan' }).click()
   await expect(admin.getByRole('status').filter({ hasText: 'Undangan sudah terbit' })).toBeVisible()
   await admin.screenshot(shot('04-terbitkan'))
@@ -61,12 +70,16 @@ test('admin membuat undangan, tamu RSVP & ucapan, admin melihat rekap', async ({
   const message = new URL(wa!).searchParams.get('text')!
   const guestUrl = message.match(/https?:\/\/\S+/)![0]
   expect(guestUrl).toContain(`/${slug}?to=Pak+Tes&g=`)
+  expect(message.startsWith('Shalom,\nKepada Yth.')).toBe(true)
+  expect(message).toContain('Tuhan Yesus memberkati.')
 
   // ── Tamu (layar HP 360px) ──
   const guest = await browser.newPage()
   await guest.goto(new URL(guestUrl).pathname + new URL(guestUrl).search)
   await expect(guest.getByText('Pak Tes').first()).toBeVisible()
   await guest.getByRole('button', { name: 'Buka Undangan' }).click()
+  await expect(guest.getByText(/kasih karunia Tuhan Yesus Kristus/)).toBeVisible()
+  await expect(guest.getByText(/Kejadian 2:24/)).toBeVisible()
 
   const rsvp = guest.locator('[data-section="rsvp"]')
   await expect(rsvp.getByLabel('Nama')).toHaveValue('Pak Tes')

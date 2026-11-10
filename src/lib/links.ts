@@ -1,4 +1,5 @@
 import { normalizePhone } from './phone'
+import { fillWaMessage, TEXT_TEMPLATES } from './text-templates'
 
 const MAX_GUEST_NAME = 100
 const CODE_ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789'
@@ -23,20 +24,9 @@ export function guestCode(): string {
   return Array.from(bytes, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join('')
 }
 
+/** Pesan WA dengan template Umum (dipakai bila undangan belum punya pesan sendiri). */
 export function waMessage(p: { guestName: string; coupleName: string; link: string }): string {
-  return `Kepada Yth.
-Bapak/Ibu/Saudara/i *${p.guestName}*
-
-Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami:
-
-*${p.coupleName}*
-
-Berikut link undangan kami:
-${p.link}
-
-Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.
-
-Terima kasih.`
+  return fillWaMessage(TEXT_TEMPLATES.umum.wa, p)
 }
 
 export function waShareUrl(phone: string | null, message: string): string {

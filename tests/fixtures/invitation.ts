@@ -18,6 +18,9 @@ export function makeInvitation(overrides: Partial<InvitationFull> = {}): Invitat
     bride_photo_url: null,
     cover_photo_url: null,
     opening_text: 'Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup.',
+    intro_text: null,
+    closing_text: null,
+    wa_message: null,
     music_url: null,
     created_at: '2026-11-01T00:00:00Z',
     events: [

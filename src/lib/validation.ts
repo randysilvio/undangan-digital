@@ -36,6 +36,10 @@ const optional = (max: number) =>
     .optional()
     .transform((v) => v || null)
 
+/** Browser mengirim isi textarea dengan CRLF; seragamkan ke LF sebelum validasi dan penyimpanan. */
+const multiline = <T extends z.ZodType>(schema: T) =>
+  z.preprocess((v) => (typeof v === 'string' ? v.replace(/\r\n?/g, '\n') : v), schema)
+
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/
 
 export const rsvpSchema = z
@@ -75,7 +79,15 @@ export const invitationSchema = z.object({
   bride_name: required(100),
   bride_nickname: required(30),
   bride_parents: optional(200),
-  opening_text: optional(1000),
+  opening_text: multiline(optional(1000)),
+  intro_text: multiline(required(500, 'Kalimat pengantar')),
+  closing_text: multiline(required(500, 'Kalimat penutup')),
+  wa_message: multiline(
+    required(1500, 'Pesan WhatsApp').refine(
+      (s) => s.includes('{link}'),
+      'Pesan WhatsApp harus memuat kode {link} agar tamu menerima link undangan',
+    ),
+  ),
 })
 
 function isRealDate(s: string): boolean {

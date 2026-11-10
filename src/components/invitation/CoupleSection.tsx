@@ -27,9 +27,9 @@ function Person(props: { photo: string | null; name: string; nickname: string; p
   )
 }
 
-export function CoupleSection({ invitation: i }: { invitation: Invitation }) {
+export function CoupleSection({ invitation: i, intro }: { invitation: Invitation; intro: string }) {
   return (
-    <Section id="mempelai" title="Mempelai" subtitle="Dengan memohon rahmat dan ridho Tuhan Yang Maha Esa, kami bermaksud menyelenggarakan pernikahan:">
+    <Section id="mempelai" title="Mempelai" subtitle={intro}>
       <div className="space-y-8">
         <Person photo={i.groom_photo_url} name={i.groom_name} nickname={i.groom_nickname} parents={i.groom_parents} />
         <p aria-hidden className="text-center font-names text-5xl text-inv-accent">

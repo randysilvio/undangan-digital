@@ -1,3 +1,4 @@
+import { effectiveTexts } from '@/lib/text-templates'
 import { earliestEvent, eventInstant, formatTanggal } from '@/lib/time'
 import type { InvitationFull, Wish } from '@/lib/types'
 import { ClosingSection } from './ClosingSection'
@@ -22,6 +23,7 @@ export interface InvitationViewProps {
 
 export function InvitationView({ invitation: inv, guestName, guestCode, wishes, preview }: InvitationViewProps) {
   const coupleName = `${inv.groom_nickname} & ${inv.bride_nickname}`
+  const texts = effectiveTexts(inv)
   const first = earliestEvent(inv.events, inv.timezone)
 
   return (
@@ -41,7 +43,7 @@ export function InvitationView({ invitation: inv, guestName, guestCode, wishes, 
         preview={preview}
       >
         {inv.opening_text && <OpeningSection text={inv.opening_text} />}
-        <CoupleSection invitation={inv} />
+        <CoupleSection invitation={inv} intro={texts.intro} />
 
         {first && (
           <Section id="hitung-mundur" title="Menuju Hari Bahagia">
@@ -61,7 +63,7 @@ export function InvitationView({ invitation: inv, guestName, guestCode, wishes, 
           <WishesForm invitationId={inv.id} slug={inv.slug} guestName={guestName} wishes={wishes} disabled={preview} />
         </Section>
 
-        <ClosingSection coupleName={coupleName} />
+        <ClosingSection coupleName={coupleName} text={texts.closing} />
       </CoverGate>
     </main>
   )

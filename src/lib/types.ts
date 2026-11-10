@@ -19,6 +19,10 @@ export interface Invitation {
   bride_photo_url: string | null
   cover_photo_url: string | null
   opening_text: string | null
+  /** Null = teks template Umum (undangan lama). */
+  intro_text: string | null
+  closing_text: string | null
+  wa_message: string | null
   music_url: string | null
   created_at: string
 }

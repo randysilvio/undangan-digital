@@ -12,6 +12,9 @@ const base: Record<string, string> = {
   bride_nickname: 'Ani',
   bride_parents: '',
   opening_text: '',
+  intro_text: 'Pengantar',
+  closing_text: 'Penutup',
+  wa_message: 'Halo {tamu}: {link}',
 }
 const ev = { name: 'Akad', date: '2026-12-12', start_time: '08:00', end_time: '', venue_name: 'Masjid', address: 'Jl. A', maps_url: '' }
 
