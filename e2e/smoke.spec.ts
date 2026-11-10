@@ -91,6 +91,10 @@ test('admin membuat undangan, tamu RSVP & ucapan, admin melihat rekap', async ({
   const monitorText = admin.getByText(/\/pantau\/[A-Za-z0-9_-]{32}$/)
   await expect(monitorText).toBeVisible()
   const monitorUrl = (await monitorText.textContent())!
+  const monitorWa = await admin.getByRole('link', { name: 'Kirim WA' }).getAttribute('href')
+  const monitorMsg = new URL(monitorWa!).searchParams.get('text')!
+  expect(monitorMsg).toContain('*Tes & Uji*')
+  expect(monitorMsg).toContain(monitorUrl)
   const couple = await browser.newPage()
   await couple.goto(new URL(monitorUrl).pathname)
   await expect(couple.getByText('Rekap Kehadiran Tamu')).toBeVisible()

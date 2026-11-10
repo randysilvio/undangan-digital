@@ -44,7 +44,7 @@ async function Responses({ params }: PageProps<'/admin/[id]/responses'>) {
       <MonitorLinkCard
         invitationId={inv.id}
         link={token ? monitorLink(SITE_URL, token) : null}
-        coupleName={` & ${inv.bride_nickname}`}
+        coupleName={`${inv.groom_nickname} & ${inv.bride_nickname}`}
       />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

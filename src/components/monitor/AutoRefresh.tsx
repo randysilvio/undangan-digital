@@ -3,28 +3,34 @@
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-type VisibilityDoc = Pick<Document, 'visibilityState' | 'addEventListener' | 'removeEventListener'>
+type Listenable = Pick<EventTarget, 'addEventListener' | 'removeEventListener'>
+export type RefreshEnv = {
+  doc: Listenable & Pick<Document, 'visibilityState'>
+  win: Listenable & { navigator: Pick<Navigator, 'onLine'> }
+}
 
 /**
- * Memanggil refresh tiap intervalMs selama halaman terlihat, dan sekali saat halaman kembali
- * terlihat (mis. HP dibuka lagi). Mengembalikan fungsi pembersih.
+ * Memanggil refresh tiap intervalMs selama halaman terlihat dan online; sekali saat halaman kembali
+ * terlihat (mis. HP dibuka lagi) atau koneksi kembali. Tidak menyegarkan saat offline: router.refresh()
+ * yang gagal di jaringan membuat Next bernavigasi penuh ke halaman "tidak ada internet" browser.
+ * Mengembalikan fungsi pembersih.
  */
-export function startAutoRefresh(doc: VisibilityDoc, refresh: () => void, intervalMs = 60_000): () => void {
-  const timer = setInterval(() => {
-    if (doc.visibilityState === 'visible') refresh()
-  }, intervalMs)
-  const onVisible = () => {
-    if (doc.visibilityState === 'visible') refresh()
+export function startAutoRefresh({ doc, win }: RefreshEnv, refresh: () => void, intervalMs = 60_000): () => void {
+  const maybeRefresh = () => {
+    if (doc.visibilityState === 'visible' && win.navigator.onLine) refresh()
   }
-  doc.addEventListener('visibilitychange', onVisible)
+  const timer = setInterval(maybeRefresh, intervalMs)
+  doc.addEventListener('visibilitychange', maybeRefresh)
+  win.addEventListener('online', maybeRefresh)
   return () => {
     clearInterval(timer)
-    doc.removeEventListener('visibilitychange', onVisible)
+    doc.removeEventListener('visibilitychange', maybeRefresh)
+    win.removeEventListener('online', maybeRefresh)
   }
 }
 
 export function AutoRefresh() {
   const router = useRouter()
-  useEffect(() => startAutoRefresh(document, () => router.refresh()), [router])
+  useEffect(() => startAutoRefresh({ doc: document, win: window }, () => router.refresh()), [router])
   return null
 }
