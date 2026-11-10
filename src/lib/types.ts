@@ -1,0 +1,89 @@
+export type ThemeName = 'elegan' | 'modern'
+export type TimeZoneId = 'Asia/Jakarta' | 'Asia/Makassar' | 'Asia/Jayapura'
+export type Attendance = 'hadir' | 'tidak' | 'ragu'
+export type InvitationStatus = 'draft' | 'published'
+
+export interface Invitation {
+  id: string
+  slug: string
+  status: InvitationStatus
+  theme: ThemeName
+  timezone: TimeZoneId
+  groom_name: string
+  groom_nickname: string
+  groom_parents: string | null
+  groom_photo_url: string | null
+  bride_name: string
+  bride_nickname: string
+  bride_parents: string | null
+  bride_photo_url: string | null
+  cover_photo_url: string | null
+  opening_text: string | null
+  music_url: string | null
+  created_at: string
+}
+
+export interface InvitationEvent {
+  id: string
+  invitation_id: string
+  name: string
+  /** YYYY-MM-DD */
+  date: string
+  /** HH:MM */
+  start_time: string
+  end_time: string | null
+  venue_name: string
+  address: string
+  maps_url: string | null
+  sort_order: number
+}
+
+export interface GalleryPhoto {
+  id: string
+  invitation_id: string
+  url: string
+  sort_order: number
+}
+
+export interface GiftAccount {
+  id: string
+  invitation_id: string
+  provider: string
+  account_number: string
+  account_holder: string
+  sort_order: number
+}
+
+export interface Guest {
+  id: string
+  invitation_id: string
+  name: string
+  phone: string | null
+  code: string
+  created_at: string
+}
+
+export interface Rsvp {
+  id: string
+  invitation_id: string
+  guest_code: string | null
+  name: string
+  attendance: Attendance
+  party_size: number
+  created_at: string
+}
+
+export interface Wish {
+  id: string
+  invitation_id: string
+  name: string
+  message: string
+  hidden: boolean
+  created_at: string
+}
+
+export type InvitationFull = Invitation & {
+  events: InvitationEvent[]
+  gallery: GalleryPhoto[]
+  gifts: GiftAccount[]
+}
