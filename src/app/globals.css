@@ -1,26 +1,58 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Token tema undangan → utilitas Tailwind: bg-inv-bg, text-inv-accent, font-heading, dst. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-inv-bg: var(--inv-bg);
+  --color-inv-surface: var(--inv-surface);
+  --color-inv-text: var(--inv-text);
+  --color-inv-muted: var(--inv-muted);
+  --color-inv-accent: var(--inv-accent);
+  --color-inv-on-accent: var(--inv-on-accent);
+  --color-inv-line: var(--inv-line);
+  --font-heading: var(--inv-heading);
+  --font-body: var(--inv-body);
+  --font-names: var(--inv-names);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Tema Elegan: krem-emas, serif */
+[data-theme="elegan"] {
+  --inv-bg: #f7f1e8;
+  --inv-surface: #fffaf3;
+  --inv-text: #3d3329;
+  --inv-muted: #7a6a58;
+  --inv-accent: #b08d57;
+  --inv-on-accent: #ffffff;
+  --inv-line: #e6d9c3;
+  --inv-heading: var(--font-cormorant), Georgia, serif;
+  --inv-body: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+  --inv-names: var(--font-great-vibes), var(--font-cormorant), cursive;
+  --inv-cover-overlay: linear-gradient(to bottom, rgb(61 51 41 / 0.35), rgb(61 51 41 / 0.7));
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #fafaf9;
+  color: #1c1917;
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .inv-fade-in {
+    animation: inv-fade-in 0.8s ease-out both;
+  }
+}
+
+@keyframes inv-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
