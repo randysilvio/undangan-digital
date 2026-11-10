@@ -8,7 +8,9 @@ import { EventsSection } from './EventsSection'
 import { GallerySection } from './GallerySection'
 import { GiftSection } from './GiftSection'
 import { OpeningSection } from './OpeningSection'
+import { RsvpForm } from './RsvpForm'
 import { Section } from './Section'
+import { WishesForm } from './WishesSection'
 
 export interface InvitationViewProps {
   invitation: InvitationFull
@@ -18,7 +20,7 @@ export interface InvitationViewProps {
   preview?: boolean
 }
 
-export function InvitationView({ invitation: inv, guestName, preview }: InvitationViewProps) {
+export function InvitationView({ invitation: inv, guestName, guestCode, wishes, preview }: InvitationViewProps) {
   const coupleName = `${inv.groom_nickname} & ${inv.bride_nickname}`
   const first = inv.events[0]
 
@@ -50,6 +52,15 @@ export function InvitationView({ invitation: inv, guestName, preview }: Invitati
         {inv.events.length > 0 && <EventsSection events={inv.events} timezone={inv.timezone} coupleName={coupleName} />}
         {inv.gallery.length > 0 && <GallerySection photos={inv.gallery} />}
         {inv.gifts.length > 0 && <GiftSection gifts={inv.gifts} />}
+
+        <Section id="rsvp" title="Konfirmasi Kehadiran" subtitle="Mohon konfirmasi kehadiran Anda untuk membantu persiapan kami.">
+          <RsvpForm invitationId={inv.id} slug={inv.slug} guestName={guestName} guestCode={guestCode} disabled={preview} />
+        </Section>
+
+        <Section id="ucapan" title="Ucapan & Doa" tone="surface">
+          <WishesForm invitationId={inv.id} slug={inv.slug} guestName={guestName} wishes={wishes} disabled={preview} />
+        </Section>
+
         <ClosingSection coupleName={coupleName} />
       </CoverGate>
     </main>

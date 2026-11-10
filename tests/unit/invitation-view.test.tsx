@@ -43,6 +43,25 @@ describe('InvitationView', () => {
   it('memakai tema undangan', () => {
     expect(html()).toContain('data-theme="elegan"')
   })
+  it('formulir RSVP terisi nama tamu dan membawa kode tamu', () => {
+    const out = renderToStaticMarkup(
+      <InvitationView invitation={makeInvitation()} guestName="Pak Joko" guestCode="ab12cd" wishes={[]} />,
+    )
+    expect(out).toContain('data-section="rsvp"')
+    expect(out).toMatch(/name="name"[^>]*value="Pak Joko"/)
+    expect(out).toMatch(/name="g"[^>]*value="ab12cd"/)
+  })
+  it('menampilkan ucapan tamu sebagai teks', () => {
+    const out = renderToStaticMarkup(
+      <InvitationView
+        invitation={makeInvitation()}
+        guestName={null}
+        guestCode={null}
+        wishes={[{ id: 'w1', invitation_id: 'inv-1', name: 'Sri', message: '<b>Selamat</b>', hidden: false, created_at: '2026-12-01T00:00:00Z' }]}
+      />,
+    )
+    expect(out).toContain('&lt;b&gt;Selamat&lt;/b&gt;')
+  })
   it('mendukung tema modern', () => {
     expect(html({ theme: 'modern' })).toContain('data-theme="modern"')
   })
