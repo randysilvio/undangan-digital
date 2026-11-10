@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseGiftsForm, parseInvitationForm } from '@/lib/admin-forms'
+import { parseGiftsForm, parseInvitationForm, prepareGuestPaste } from '@/lib/admin-forms'
 
 const base: Record<string, string> = {
   slug: 'budi-ani',
@@ -44,6 +44,28 @@ describe('parseInvitationForm', () => {
     expect(parseInvitationForm(fd({ ...base, events: JSON.stringify(Array(11).fill(ev)) })).fieldErrors?.events).toBe(
       'Maksimal 10 acara',
     )
+  })
+})
+
+describe('prepareGuestPaste', () => {
+  it('melewati nama yang sudah ada di daftar (tanpa beda huruf besar/kecil)', () => {
+    expect(prepareGuestPaste('Pak Joko\nBu Sri\nAni', ['pak joko'])).toEqual({
+      guests: [
+        { name: 'Bu Sri', phone: null },
+        { name: 'Ani', phone: null },
+      ],
+      skipped: 1,
+    })
+  })
+  it('menghitung duplikat di tempelan sebagai dilewati', () => {
+    expect(prepareGuestPaste('A\na\nB', [])).toMatchObject({ skipped: 1 })
+  })
+  it('maksimal 500 tamu sekali tempel', () => {
+    const text = Array.from({ length: 501 }, (_, i) => `Tamu ${i}`).join('\n')
+    expect(prepareGuestPaste(text, [])).toEqual({ error: 'Maksimal 500 tamu sekali tempel' })
+  })
+  it('tempelan kosong → error', () => {
+    expect(prepareGuestPaste('  \n ', [])).toEqual({ error: 'Tempel minimal satu nama' })
   })
 })
 

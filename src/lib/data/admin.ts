@@ -1,7 +1,8 @@
 import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { guestCode } from '../links'
 import { nextAvailableSlug } from '../slug'
-import type { Invitation, InvitationFull, InvitationStatus } from '../types'
+import type { Guest, Invitation, InvitationFull, InvitationStatus } from '../types'
 import type { EventInput, GiftInput, InvitationInput } from '../validation'
 import { FULL_SELECT, normalizeInvitation } from './public'
 
@@ -102,6 +103,28 @@ export async function addGalleryPhotos(sb: SupabaseClient, id: string, urls: str
 /** Hanya menghapus baris; file di Storage dibiarkan karena bisa dipakai undangan hasil duplikat. */
 export async function deleteGalleryPhoto(sb: SupabaseClient, invitationId: string, photoId: string): Promise<Result<null>> {
   const { error } = await sb.from('gallery_photos').delete().eq('id', photoId).eq('invitation_id', invitationId)
+  return error ? fail(error) : ok(null)
+}
+
+export async function listGuests(sb: SupabaseClient, id: string): Promise<Guest[]> {
+  const { data, error } = await sb.from('guests').select('*').eq('invitation_id', id).order('created_at').order('name')
+  if (error) throw error
+  return data as Guest[]
+}
+
+/** Menambah tamu dengan kode unik; bila ada kode bentrok, dicoba sekali lagi dengan kode baru. */
+export async function addGuests(sb: SupabaseClient, id: string, guests: { name: string; phone: string | null }[]): Promise<Result<{ added: number }>> {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const rows = guests.map((g) => ({ invitation_id: id, name: g.name, phone: g.phone, code: guestCode() }))
+    const { error } = await sb.from('guests').insert(rows)
+    if (!error) return ok({ added: rows.length })
+    if (error.code !== '23505') return fail(error)
+  }
+  return fail({ message: 'kode tamu bentrok' })
+}
+
+export async function deleteGuest(sb: SupabaseClient, invitationId: string, guestId: string): Promise<Result<null>> {
+  const { error } = await sb.from('guests').delete().eq('id', guestId).eq('invitation_id', invitationId)
   return error ? fail(error) : ok(null)
 }
 

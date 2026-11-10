@@ -1,5 +1,14 @@
 import type { z } from 'zod'
-import { eventSchema, fieldErrors, giftSchema, invitationSchema, type EventInput, type GiftInput, type InvitationInput } from './validation'
+import {
+  eventSchema,
+  fieldErrors,
+  giftSchema,
+  invitationSchema,
+  parseGuestList,
+  type EventInput,
+  type GiftInput,
+  type InvitationInput,
+} from './validation'
 
 type Parsed<T> = { data: T; fieldErrors?: undefined } | { data?: undefined; fieldErrors: Record<string, string> }
 
@@ -44,6 +53,21 @@ export function parseInvitationForm(fd: FormData): Parsed<{ invitation: Invitati
 
   if (Object.keys(errors).length || !inv.success) return { fieldErrors: errors }
   return { data: { invitation: inv.data, events } }
+}
+
+const MAX_GUEST_PASTE = 500
+
+/** Daftar tamu tempelan, tanpa nama yang sudah ada. */
+export function prepareGuestPaste(
+  text: string,
+  existingNames: string[],
+): { guests: { name: string; phone: string | null }[]; skipped: number } | { error: string } {
+  const { guests, duplicates } = parseGuestList(text)
+  if (guests.length === 0) return { error: 'Tempel minimal satu nama' }
+  if (guests.length > MAX_GUEST_PASTE) return { error: `Maksimal ${MAX_GUEST_PASTE} tamu sekali tempel` }
+  const existing = new Set(existingNames.map((n) => n.toLowerCase()))
+  const fresh = guests.filter((g) => !existing.has(g.name.toLowerCase()))
+  return { guests: fresh, skipped: duplicates + (guests.length - fresh.length) }
 }
 
 export function parseGiftsForm(fd: FormData): Parsed<GiftInput[]> {
