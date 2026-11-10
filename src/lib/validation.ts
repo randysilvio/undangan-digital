@@ -133,12 +133,19 @@ export function parseGuestList(text: string): { guests: { name: string; phone: s
     if (!line) continue
     let name = line
     let phone: string | null = null
-    const comma = line.lastIndexOf(',')
-    if (comma > 0) {
-      const maybe = normalizePhone(line.slice(comma + 1))
-      if (maybe) {
-        phone = maybe
-        name = line.slice(0, comma)
+    // Nomor opsional setelah TAB (tempelan Excel/Sheets) atau koma terakhir.
+    const tab = raw.indexOf('\t')
+    if (tab > 0) {
+      name = raw.slice(0, tab)
+      phone = normalizePhone(raw.slice(tab + 1))
+    } else {
+      const comma = line.lastIndexOf(',')
+      if (comma > 0) {
+        const maybe = normalizePhone(line.slice(comma + 1))
+        if (maybe) {
+          phone = maybe
+          name = line.slice(0, comma)
+        }
       }
     }
     name = name.replace(/\s+/g, ' ').trim().slice(0, 100)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { startTransition, useActionState, useState, type FormEvent } from 'react'
 import { submitWish } from '@/app/[slug]/actions'
 import type { Wish } from '@/lib/types'
 import { initialFormState } from '@/lib/validation'
@@ -18,12 +18,26 @@ interface WishesProps {
 
 export function WishesForm({ invitationId, slug, guestName, wishes, disabled }: WishesProps) {
   const [state, action, pending] = useActionState(submitWish, initialFormState)
+  const [message, setMessage] = useState('')
+  const [seen, setSeen] = useState(state)
   const v = state.values
   const e = state.fieldErrors ?? {}
 
+  // Kosongkan ucapan hanya setelah berhasil terkirim (isian tetap ada bila gagal).
+  if (state !== seen) {
+    setSeen(state)
+    if (state.status === 'ok') setMessage('')
+  }
+
+  function onSubmit(ev: FormEvent<HTMLFormElement>) {
+    ev.preventDefault()
+    const fd = new FormData(ev.currentTarget)
+    startTransition(() => action(fd))
+  }
+
   return (
     <div className="space-y-6">
-      <form action={action} className="relative space-y-4">
+      <form onSubmit={onSubmit} className="relative space-y-4">
         <input type="hidden" name="invitation_id" value={invitationId} />
         <input type="hidden" name="slug" value={slug} />
         <input {...honeypotProps} />
@@ -34,7 +48,15 @@ export function WishesForm({ invitationId, slug, guestName, wishes, disabled }: 
         </label>
         <label className="block">
           <span className="mb-1 block text-sm text-inv-muted">Ucapan & doa</span>
-          <textarea name="message" required maxLength={500} rows={4} defaultValue={v?.message ?? ''} className={guestInput} />
+          <textarea
+            name="message"
+            required
+            maxLength={500}
+            rows={4}
+            value={message}
+            onChange={(x) => setMessage(x.target.value)}
+            className={guestInput}
+          />
           {e.message && <span className="mt-1 block text-sm text-red-700">{e.message}</span>}
         </label>
         {state.status === 'error' && state.message && (

@@ -102,6 +102,15 @@ describe.skipIf(!url || !anonKey || !serviceKey)('RLS', () => {
     expect(error).not.toBeNull()
   })
 
+  it('anon tidak bisa memalsukan waktu RSVP/ucapan', async () => {
+    const r = await anon
+      .from('rsvps')
+      .insert({ invitation_id: publishedId, name: 'Palsu', attendance: 'hadir', party_size: 1, created_at: '2099-01-01T00:00:00Z' })
+    expect(r.error).not.toBeNull()
+    const w = await anon.from('wishes').insert({ invitation_id: publishedId, name: 'Palsu', message: 'x', created_at: '2099-01-01T00:00:00Z' })
+    expect(w.error).not.toBeNull()
+  })
+
   it('user login non-admin tidak bisa membaca draft', async () => {
     const { data } = await user.from('invitations').select('id').eq('id', draftId)
     expect(data).toEqual([])

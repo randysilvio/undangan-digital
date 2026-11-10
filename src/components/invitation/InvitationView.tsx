@@ -1,4 +1,4 @@
-import { eventInstant, formatTanggal } from '@/lib/time'
+import { earliestEvent, eventInstant, formatTanggal } from '@/lib/time'
 import type { InvitationFull, Wish } from '@/lib/types'
 import { ClosingSection } from './ClosingSection'
 import { Countdown } from './Countdown'
@@ -22,10 +22,10 @@ export interface InvitationViewProps {
 
 export function InvitationView({ invitation: inv, guestName, guestCode, wishes, preview }: InvitationViewProps) {
   const coupleName = `${inv.groom_nickname} & ${inv.bride_nickname}`
-  const first = inv.events[0]
+  const first = earliestEvent(inv.events, inv.timezone)
 
   return (
-    <main data-theme={inv.theme} className="min-h-dvh bg-inv-bg font-body text-inv-text">
+    <main data-theme={inv.theme} className="min-h-dvh bg-inv-bg font-body text-inv-text [overflow-wrap:anywhere]">
       {preview && (
         <p className="sticky top-0 z-50 bg-amber-500 px-4 py-2 text-center text-sm font-medium text-white">
           Mode pratinjau{inv.status === 'draft' ? ' — undangan belum terbit' : ''}

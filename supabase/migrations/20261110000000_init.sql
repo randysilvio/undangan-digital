@@ -105,7 +105,9 @@ create index wishes_invitation_idx on public.wishes (invitation_id, created_at d
 revoke all on all tables in schema public from anon, authenticated;
 grant select on public.invitations, public.events, public.gallery_photos, public.gift_accounts, public.wishes
   to anon, authenticated;
-grant insert on public.rsvps, public.wishes to anon, authenticated;
+-- Tamu hanya boleh mengisi kolom ini (tidak bisa memalsukan id/created_at/hidden).
+grant insert (invitation_id, guest_code, name, attendance, party_size) on public.rsvps to anon;
+grant insert (invitation_id, name, message) on public.wishes to anon;
 grant select, insert, update, delete on all tables in schema public to authenticated;
 grant execute on function public.is_admin() to anon, authenticated;
 

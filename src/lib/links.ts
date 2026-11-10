@@ -1,13 +1,14 @@
 import { normalizePhone } from './phone'
 
-const MAX_GUEST_NAME = 60
+const MAX_GUEST_NAME = 100
 const CODE_ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789'
 
-/** Nama tamu dari query `?to=`: dirapikan, maksimal 60 karakter. Escape dilakukan React saat render. */
+/** Nama tamu dari query `?to=`: dirapikan, maksimal 100 karakter (per code point). Escape dilakukan React saat render. */
 export function parseGuestName(raw: string | string[] | undefined): string | null {
   const value = Array.isArray(raw) ? raw[0] : raw
   if (!value) return null
-  const name = value.replace(/\s+/g, ' ').trim().slice(0, MAX_GUEST_NAME).trim()
+  const tidy = value.replace(/\s+/g, ' ').trim()
+  const name = Array.from(tidy).slice(0, MAX_GUEST_NAME).join('').trim()
   return name || null
 }
 

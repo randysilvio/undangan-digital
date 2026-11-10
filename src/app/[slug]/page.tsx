@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import { InvitationView } from '@/components/invitation/InvitationView'
 import { getPublishedInvitation, getVisibleWishes } from '@/lib/data/public'
 import { parseGuestName } from '@/lib/links'
-import { formatTanggal } from '@/lib/time'
+import { earliestEvent, formatTanggal } from '@/lib/time'
 
 const CODE = /^[a-z0-9]{6}$/
 
@@ -13,7 +13,8 @@ export async function generateMetadata({ params }: PageProps<'/[slug]'>): Promis
   const inv = await getPublishedInvitation(slug)
   if (!inv) return { title: 'Undangan tidak ditemukan', robots: { index: false } }
   const title = `Undangan Pernikahan ${inv.groom_nickname} & ${inv.bride_nickname}`
-  const description = inv.events[0] ? formatTanggal(inv.events[0].date) : 'Undangan pernikahan'
+  const first = earliestEvent(inv.events, inv.timezone)
+  const description = first ? formatTanggal(first.date) : 'Undangan pernikahan'
   const images = inv.cover_photo_url ? [{ url: inv.cover_photo_url }] : undefined
   return {
     title,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { startTransition, useActionState, useState, type FormEvent } from 'react'
 import { submitRsvp } from '@/app/[slug]/actions'
 import { initialFormState } from '@/lib/validation'
 import { guestInput, honeypotProps } from './guest-form'
@@ -22,8 +22,17 @@ interface RsvpFormProps {
 
 export function RsvpForm({ invitationId, slug, guestName, guestCode, disabled }: RsvpFormProps) {
   const [state, action, pending] = useActionState(submitRsvp, initialFormState)
-  const [attendance, setAttendance] = useState(state.values?.attendance ?? '')
+  const [attendance, setAttendance] = useState('')
+  const [partySize, setPartySize] = useState('1')
   const [editing, setEditing] = useState(false)
+
+  // Kirim tanpa reset formulir bawaan React agar pilihan tamu tetap ada bila gagal.
+  function onSubmit(ev: FormEvent<HTMLFormElement>) {
+    ev.preventDefault()
+    const fd = new FormData(ev.currentTarget)
+    setEditing(false)
+    startTransition(() => action(fd))
+  }
   const v = state.values
   const e = state.fieldErrors ?? {}
 
@@ -40,13 +49,7 @@ export function RsvpForm({ invitationId, slug, guestName, guestCode, disabled }:
   }
 
   return (
-    <form
-      action={(fd) => {
-        setEditing(false)
-        action(fd)
-      }}
-      className="relative space-y-4"
-    >
+    <form onSubmit={onSubmit} className="relative space-y-4">
       <input type="hidden" name="invitation_id" value={invitationId} />
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="g" value={guestCode ?? ''} />
@@ -86,7 +89,7 @@ export function RsvpForm({ invitationId, slug, guestName, guestCode, disabled }:
       {attendance !== 'tidak' && (
         <label className="block">
           <span className="mb-1 block text-sm text-inv-muted">Jumlah orang</span>
-          <select name="party_size" defaultValue={v?.party_size || '1'} className={guestInput}>
+          <select name="party_size" value={partySize} onChange={(x) => setPartySize(x.target.value)} className={guestInput}>
             {Array.from({ length: 10 }, (_, i) => (
               <option key={i + 1} value={i + 1}>
                 {i + 1} orang

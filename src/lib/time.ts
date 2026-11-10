@@ -14,6 +14,15 @@ export function eventInstant(date: string, time: string, tz: TimeZoneId): Date {
   return new Date(Date.UTC(y, m - 1, d, hh - TIMEZONES[tz].offsetHours, mm))
 }
 
+/** Acara yang paling awal berlangsung (bukan sekadar urutan pertama di daftar). */
+export function earliestEvent<E extends { date: string; start_time: string }>(events: E[], tz: TimeZoneId): E | null {
+  let best: E | null = null
+  for (const e of events) {
+    if (!best || eventInstant(e.date, e.start_time, tz) < eventInstant(best.date, best.start_time, tz)) best = e
+  }
+  return best
+}
+
 export function timeLeft(target: Date, now: Date) {
   const diff = Math.max(0, Math.floor((target.getTime() - now.getTime()) / 1000))
   return {

@@ -147,3 +147,5 @@ Link lama berakhiran `.vercel.app` tetap bisa dibuka.
 | Undangan "tidak ditemukan" | Pastikan statusnya **Terbit** dan alamatnya benar. |
 | Link tamu mengarah ke `localhost` | Ubah `NEXT_PUBLIC_SITE_URL` di Vercel, lalu **Redeploy**. |
 | Foto ditolak | Gunakan JPG/PNG. Foto dari HP otomatis dikecilkan sebelum diunggah. |
+| Semua undangan menampilkan "Maaf, terjadi gangguan" | Proyek Supabase gratis **dijeda otomatis** bila 7 hari tidak dipakai. Buka dashboard Supabase → proyek Anda → **Restore project**, tunggu ±2 menit. |
+| Penyimpanan hampir penuh (1 GB gratis) | Foto/musik yang diganti tidak otomatis dihapus. Hapus file lama lewat Supabase → **Storage** → `media`, atau upgrade paket. |

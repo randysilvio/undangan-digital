@@ -136,6 +136,12 @@ describe('parseGuestList', () => {
   it('koma tanpa nomor valid tetap bagian dari nama', () => {
     expect(parseGuestList('Bapak Andi, S.H.').guests).toEqual([{ name: 'Bapak Andi, S.H.', phone: null }])
   })
+  it('menerima tempelan dari Excel/Sheets (nama<TAB>nomor)', () => {
+    expect(parseGuestList('Bu Sri\t0812-3456-7890\nPak Joko\t').guests).toEqual([
+      { name: 'Bu Sri', phone: '6281234567890' },
+      { name: 'Pak Joko', phone: null },
+    ])
+  })
   it('mendukung baris Windows (CRLF)', () => {
     expect(parseGuestList('A\r\nB\r\n').guests.map((g) => g.name)).toEqual(['A', 'B'])
   })

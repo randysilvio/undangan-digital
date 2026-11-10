@@ -12,8 +12,12 @@ describe('parseGuestName', () => {
     expect(parseGuestName(undefined)).toBeNull()
     expect(parseGuestName('   ')).toBeNull()
   })
-  it('memotong ke 60 karakter', () => {
-    expect(parseGuestName('x'.repeat(100))).toHaveLength(60)
+  it('memotong ke 100 karakter (sama dengan batas nama tamu di admin)', () => {
+    expect(parseGuestName('x'.repeat(150))).toHaveLength(100)
+  })
+  it('tidak memotong emoji di tengah', () => {
+    const out = parseGuestName('a'.repeat(99) + '😀😀')!
+    expect(out).toBe('a'.repeat(99) + '😀')
   })
   it('tidak mengubah teks berisi tag (escape dilakukan saat render)', () => {
     expect(parseGuestName('<script>alert(1)</script>')).toBe('<script>alert(1)</script>')

@@ -8,6 +8,16 @@ type InsertResult = PromiseLike<{ error: unknown }>
 
 const str = (fd: FormData, key: string) => String(fd.get(key) ?? '')
 
+/** Gangguan jaringan/database tidak boleh menjadi halaman error bagi tamu. */
+async function safeInsert(run: () => InsertResult): Promise<boolean> {
+  try {
+    const { error } = await run()
+    return !error
+  } catch {
+    return false
+  }
+}
+
 export async function handleRsvp(fd: FormData, insert: (row: Omit<Rsvp, 'id' | 'created_at'>) => InsertResult): Promise<FormState> {
   const values = { name: str(fd, 'name'), attendance: str(fd, 'attendance'), party_size: str(fd, 'party_size') }
   if (str(fd, 'website')) return { status: 'ok', values }
@@ -19,8 +29,8 @@ export async function handleRsvp(fd: FormData, insert: (row: Omit<Rsvp, 'id' | '
   if (!parsed.success) return { status: 'error', fieldErrors: fieldErrors(parsed.error), values }
 
   const g = str(fd, 'g')
-  const { error } = await insert({ invitation_id: invitationId, guest_code: CODE.test(g) ? g : null, ...parsed.data })
-  if (error) return { status: 'error', message: FAILED, values }
+  const saved = await safeInsert(() => insert({ invitation_id: invitationId, guest_code: CODE.test(g) ? g : null, ...parsed.data }))
+  if (!saved) return { status: 'error', message: FAILED, values }
   return { status: 'ok', values }
 }
 
@@ -37,8 +47,8 @@ export async function handleWish(
   const parsed = wishSchema.safeParse(values)
   if (!parsed.success) return { status: 'error', fieldErrors: fieldErrors(parsed.error), values }
 
-  const { error } = await insert({ invitation_id: invitationId, ...parsed.data })
-  if (error) return { status: 'error', message: FAILED, values }
+  const saved = await safeInsert(() => insert({ invitation_id: invitationId, ...parsed.data }))
+  if (!saved) return { status: 'error', message: FAILED, values }
   // Nama dipertahankan agar mudah mengirim ucapan lagi; isi ucapan dikosongkan.
   return { status: 'ok', values: { name: values.name, message: '' } }
 }

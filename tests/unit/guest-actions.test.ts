@@ -32,6 +32,14 @@ describe('handleRsvp', () => {
     expect(s.values?.name).toBe('Joko')
   })
 
+  it('penyimpanan melempar exception → pesan umum, isian utuh', async () => {
+    const s = await handleRsvp(fd(rsvp), () => {
+      throw new Error('network')
+    })
+    expect(s).toMatchObject({ status: 'error', message: 'Gagal mengirim, coba lagi' })
+    expect(s.values?.party_size).toBe('2')
+  })
+
   it('sukses → menyimpan baris RSVP', async () => {
     const insert = vi.fn(async () => ({ error: null }))
     expect((await handleRsvp(fd(rsvp), insert)).status).toBe('ok')
@@ -69,6 +77,13 @@ describe('handleWish', () => {
     const s = await handleWish(fd(wish), async () => ({ error: new Error('db') }))
     expect(s).toMatchObject({ status: 'error', message: 'Gagal mengirim, coba lagi' })
     expect(s.values?.message).toBe('Selamat menempuh hidup baru')
+  })
+
+  it('penyimpanan melempar exception → pesan umum', async () => {
+    const s = await handleWish(fd(wish), async () => {
+      throw new Error('network')
+    })
+    expect(s).toMatchObject({ status: 'error', message: 'Gagal mengirim, coba lagi' })
   })
 
   it('sukses → menyimpan ucapan', async () => {

@@ -29,8 +29,16 @@ export function InvitationForm({ invitation, siteUrl }: { invitation?: Invitatio
   }
 
   // Kirim tanpa reset formulir bawaan React, agar isian tetap ada bila ada error.
+  const slugChangedWhilePublished = invitation?.status === 'published' && slug !== invitation.slug
+
   function onSubmit(ev: FormEvent<HTMLFormElement>) {
     ev.preventDefault()
+    if (
+      slugChangedWhilePublished &&
+      !confirm(`Alamat undangan akan berubah dari /${invitation.slug} menjadi /${slug}.\n\nSemua link yang SUDAH dikirim ke tamu tidak akan bisa dibuka lagi. Lanjutkan?`)
+    ) {
+      return
+    }
     const fd = new FormData(ev.currentTarget)
     fd.set('events', eventsPayload(events))
     startTransition(() => action(fd))
@@ -90,6 +98,13 @@ export function InvitationForm({ invitation, siteUrl }: { invitation?: Invitatio
             placeholder="budi-ani"
           />
         </Field>
+        {slugChangedWhilePublished && (
+          <div className="mt-3">
+            <Notice kind="error">
+              Undangan ini sudah terbit. Mengubah alamat membuat semua link yang sudah dikirim ke tamu tidak bisa dibuka.
+            </Notice>
+          </div>
+        )}
       </Card>
 
       <Card title="Acara">
