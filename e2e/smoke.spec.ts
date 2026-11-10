@@ -4,7 +4,8 @@ import { expect, test } from '@playwright/test'
 const email = process.env.E2E_ADMIN_EMAIL ?? ''
 const password = process.env.E2E_ADMIN_PASSWORD ?? ''
 const slug = `e2e-${Date.now().toString(36)}`
-const shot = (name: string) => ({ path: `docs/img/${name}.png`, fullPage: false })
+// caret 'initial': jangan suntikkan style penyembunyi kursor — memicu peringatan hydration di dev overlay.
+const shot = (name: string) => ({ path: `docs/img/${name}.png`, fullPage: false, caret: 'initial' as const })
 
 test.skip(!email || !password, 'Isi E2E_ADMIN_EMAIL dan E2E_ADMIN_PASSWORD di .env.local')
 
@@ -47,7 +48,7 @@ test('admin membuat undangan, tamu RSVP & ucapan, admin melihat rekap', async ({
 
   await expect(admin).toHaveURL(/\/admin\/[0-9a-f-]+\/edit\?baru=1/)
   await admin.getByRole('button', { name: 'Terbitkan' }).click()
-  await expect(admin.getByText('Undangan sudah terbit')).toBeVisible()
+  await expect(admin.getByRole('status').filter({ hasText: 'Undangan sudah terbit' })).toBeVisible()
   await admin.screenshot(shot('04-terbitkan'))
 
   await admin.getByRole('link', { name: 'Tamu' }).click()

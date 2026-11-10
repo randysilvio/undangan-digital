@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/db/**/*.test.ts'],
-    env: loadEnv('local', process.cwd(), ''),
+    env: loadEnv('test',process.cwd(), ''),
     testTimeout: 30_000,
     hookTimeout: 60_000,
   },

@@ -34,15 +34,21 @@ describe.skipIf(!url || !anonKey || !serviceKey)('RLS', () => {
     publishedId = pub.data.id
     draftId = draft.data.id
 
-    await service.from('events').insert([
-      { invitation_id: publishedId, name: 'Akad', date: '2026-12-12', start_time: '08:00', venue_name: 'A', address: 'B' },
-      { invitation_id: draftId, name: 'Akad', date: '2026-12-12', start_time: '08:00', venue_name: 'A', address: 'B' },
+    // Bulk insert: kolom yang tidak ada di sebagian baris dikirim sebagai NULL (bukan default),
+    // jadi setiap baris harus punya kunci yang sama.
+    const seeded = await Promise.all([
+      service.from('events').insert([
+        { invitation_id: publishedId, name: 'Akad', date: '2026-12-12', start_time: '08:00', venue_name: 'A', address: 'B' },
+        { invitation_id: draftId, name: 'Akad', date: '2026-12-12', start_time: '08:00', venue_name: 'A', address: 'B' },
+      ]),
+      service.from('guests').insert({ invitation_id: publishedId, name: 'Tamu', code: 'abc123' }),
+      service.from('wishes').insert([
+        { invitation_id: publishedId, name: 'Terlihat', message: 'Selamat', hidden: false },
+        { invitation_id: publishedId, name: 'Tersembunyi', message: 'Spam', hidden: true },
+      ]),
     ])
-    await service.from('guests').insert({ invitation_id: publishedId, name: 'Tamu', code: 'abc123' })
-    await service.from('wishes').insert([
-      { invitation_id: publishedId, name: 'Terlihat', message: 'Selamat' },
-      { invitation_id: publishedId, name: 'Tersembunyi', message: 'Spam', hidden: true },
-    ])
+    const seedError = seeded.find((r) => r.error)?.error
+    if (seedError) throw seedError
 
     const email = `${tag}@undangan.test`
     const password = `Pw-${tag}-x9`
