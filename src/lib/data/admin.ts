@@ -2,7 +2,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { nextAvailableSlug } from '../slug'
 import type { Invitation, InvitationFull, InvitationStatus } from '../types'
-import type { EventInput, InvitationInput } from '../validation'
+import type { EventInput, GiftInput, InvitationInput } from '../validation'
 import { FULL_SELECT, normalizeInvitation } from './public'
 
 type DbError = { code?: string; message?: string }
@@ -74,6 +74,36 @@ export async function replaceChildren<T extends object>(
 }
 
 export const replaceEvents = (sb: SupabaseClient, id: string, events: EventInput[]) => replaceChildren(sb, 'events', id, events)
+
+export const replaceGifts = (sb: SupabaseClient, id: string, gifts: GiftInput[]) => replaceChildren(sb, 'gift_accounts', id, gifts)
+
+export type MediaField = 'groom_photo_url' | 'bride_photo_url' | 'cover_photo_url' | 'music_url'
+export const MEDIA_FIELDS: readonly MediaField[] = ['groom_photo_url', 'bride_photo_url', 'cover_photo_url', 'music_url']
+
+export async function setMediaField(sb: SupabaseClient, id: string, field: MediaField, url: string | null): Promise<Result<null>> {
+  const { error } = await sb
+    .from('invitations')
+    .update({ [field]: url })
+    .eq('id', id)
+  return error ? fail(error) : ok(null)
+}
+
+export async function countGallery(sb: SupabaseClient, id: string): Promise<number> {
+  const { count, error } = await sb.from('gallery_photos').select('id', { count: 'exact', head: true }).eq('invitation_id', id)
+  if (error) throw error
+  return count ?? 0
+}
+
+export async function addGalleryPhotos(sb: SupabaseClient, id: string, urls: string[], startOrder: number): Promise<Result<null>> {
+  const { error } = await sb.from('gallery_photos').insert(urls.map((url, i) => ({ invitation_id: id, url, sort_order: startOrder + i })))
+  return error ? fail(error) : ok(null)
+}
+
+/** Hanya menghapus baris; file di Storage dibiarkan karena bisa dipakai undangan hasil duplikat. */
+export async function deleteGalleryPhoto(sb: SupabaseClient, invitationId: string, photoId: string): Promise<Result<null>> {
+  const { error } = await sb.from('gallery_photos').delete().eq('id', photoId).eq('invitation_id', invitationId)
+  return error ? fail(error) : ok(null)
+}
 
 export async function setStatus(sb: SupabaseClient, id: string, status: InvitationStatus): Promise<Result<null>> {
   const { error } = await sb.from('invitations').update({ status }).eq('id', id)
