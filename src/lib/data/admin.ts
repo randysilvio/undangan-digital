@@ -2,7 +2,7 @@ import 'server-only'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { guestCode } from '../links'
 import { nextAvailableSlug } from '../slug'
-import type { Guest, Invitation, InvitationFull, InvitationStatus } from '../types'
+import type { Guest, Invitation, InvitationFull, InvitationStatus, Rsvp, Wish } from '../types'
 import type { EventInput, GiftInput, InvitationInput } from '../validation'
 import { FULL_SELECT, normalizeInvitation } from './public'
 
@@ -125,6 +125,23 @@ export async function addGuests(sb: SupabaseClient, id: string, guests: { name: 
 
 export async function deleteGuest(sb: SupabaseClient, invitationId: string, guestId: string): Promise<Result<null>> {
   const { error } = await sb.from('guests').delete().eq('id', guestId).eq('invitation_id', invitationId)
+  return error ? fail(error) : ok(null)
+}
+
+export async function listRsvps(sb: SupabaseClient, id: string): Promise<Rsvp[]> {
+  const { data, error } = await sb.from('rsvps').select('*').eq('invitation_id', id).order('created_at', { ascending: false })
+  if (error) throw error
+  return data as Rsvp[]
+}
+
+export async function listAllWishes(sb: SupabaseClient, id: string): Promise<Wish[]> {
+  const { data, error } = await sb.from('wishes').select('*').eq('invitation_id', id).order('created_at', { ascending: false })
+  if (error) throw error
+  return data as Wish[]
+}
+
+export async function setWishHidden(sb: SupabaseClient, invitationId: string, wishId: string, hidden: boolean): Promise<Result<null>> {
+  const { error } = await sb.from('wishes').update({ hidden }).eq('id', wishId).eq('invitation_id', invitationId)
   return error ? fail(error) : ok(null)
 }
 
