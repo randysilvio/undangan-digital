@@ -60,9 +60,9 @@ export function EventsEditor(props: { events: EventDraft[]; onChange: (e: EventD
       </datalist>
       {events.length === 0 && <p className="text-sm text-stone-500">Belum ada acara.</p>}
       {events.map((e, i) => (
-        <fieldset key={e.key} className="space-y-3 rounded-lg border border-stone-200 p-4">
+        <fieldset key={e.key} aria-label={`Acara ${i + 1}`} className="space-y-3 rounded-lg border border-stone-200 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <legend className="font-medium">Acara {i + 1}</legend>
+            <p className="font-medium">Acara {i + 1}</p>
             <div className="flex gap-1">
               <button type="button" className={secondaryButtonClass} disabled={i === 0} onClick={() => move(i, -1)} aria-label="Naikkan">
                 ↑
