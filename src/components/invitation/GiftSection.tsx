@@ -1,5 +1,6 @@
 import type { GiftAccount } from '@/lib/types'
-import { Section } from './Section'
+import { CopyButton } from './CopyButton'
+import { outlineButton, Section } from './Section'
 
 export function GiftSection({ gifts }: { gifts: GiftAccount[] }) {
   return (
@@ -15,7 +16,7 @@ export function GiftSection({ gifts }: { gifts: GiftAccount[] }) {
             <p className="text-sm font-semibold tracking-widest text-inv-accent uppercase">{g.provider}</p>
             <p className="mt-2 font-mono text-xl tracking-wider text-inv-text">{g.account_number}</p>
             <p className="text-sm text-inv-muted">a.n. {g.account_holder}</p>
-            <div className="mt-3" data-copy={g.account_number.replace(/\s/g, '')} />
+            <CopyButton text={g.account_number.replace(/\s/g, '')} label="Salin Nomor" className={`${outlineButton} mt-4`} />
           </div>
         ))}
       </div>
