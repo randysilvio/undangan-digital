@@ -11,6 +11,9 @@
     "test:db": "vitest run --config vitest.db.config.ts",
     "e2e": "playwright test",
     "db:push": "node --env-file=.env.local scripts/db-push.mjs",
+    "db:start": "npx --yes supabase@3.1.0 start && node scripts/local-env.mjs",
+    "db:stop": "npx --yes supabase@3.1.0 stop",
+    "db:reset": "npx --yes supabase@3.1.0 db reset && node scripts/local-env.mjs",
     "db:seed": "node --env-file=.env.local scripts/seed.mjs",
     "make-admin": "node --env-file=.env.local scripts/make-admin.mjs"
   },
