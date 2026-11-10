@@ -6,6 +6,7 @@ import { Card, Notice, secondaryButtonClass } from '@/components/admin/ui'
 import { CopyButton } from '@/components/invitation/CopyButton'
 import { requireAdmin } from '@/lib/auth'
 import { getInvitation, listGuests } from '@/lib/data/admin'
+import { GuestListShare } from '@/components/admin/GuestListShare'
 import { SITE_URL } from '@/lib/supabase/env'
 import { effectiveTexts } from '@/lib/text-templates'
 
@@ -37,6 +38,14 @@ async function Guests({ params }: PageProps<'/admin/[id]/guests'>) {
       </Card>
       <Card title="Tambah Tamu">
         <GuestPaste invitationId={inv.id} />
+      </Card>
+      <Card title="Kirim Daftar ke Mempelai">
+        <GuestListShare
+          coupleName={`${inv.groom_nickname} & ${inv.bride_nickname}`}
+          siteUrl={SITE_URL}
+          slug={inv.slug}
+          guests={guests}
+        />
       </Card>
       <Card title={`Daftar Tamu (${guests.length})`}>
         <GuestTable

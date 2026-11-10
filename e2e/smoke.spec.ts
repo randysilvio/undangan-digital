@@ -66,7 +66,13 @@ test('admin membuat undangan, tamu RSVP & ucapan, admin melihat rekap', async ({
   await expect(admin.getByText('1 tamu ditambahkan')).toBeVisible()
   await admin.screenshot(shot('05-tamu'))
 
-  const wa = await admin.getByRole('link', { name: 'Kirim WA' }).first().getAttribute('href')
+  // Daftar untuk mempelai (tamu tanpa nomor HP): satu pesan berisi nama + link pribadi.
+  const listWa = await admin.locator('a[href*="Daftar%20link%20undangan"]').getAttribute('href')
+  const listMsg = new URL(listWa!).searchParams.get('text')!
+  expect(listMsg).toContain('Daftar link undangan *Tes & Uji* (1 tamu).')
+  expect(listMsg).toMatch(new RegExp(`1\\. Pak Tes\\nhttps?://\\S+/${slug}\\?to=Pak\\+Tes&g=[a-z0-9]{6}`))
+
+  const wa = await admin.locator('a[href^="https://wa.me/"]:not([href*="Daftar%20link%20undangan"])').first().getAttribute('href')
   const message = new URL(wa!).searchParams.get('text')!
   const guestUrl = message.match(/https?:\/\/\S+/)![0]
   expect(guestUrl).toContain(`/${slug}?to=Pak+Tes&g=`)
