@@ -1,6 +1,7 @@
 import { cache } from 'react'
+import { MONITOR_TOKEN_RE } from '../monitor'
 import { createPublicSupabase } from '../supabase/public'
-import type { InvitationFull, Wish } from '../types'
+import type { InvitationFull, MonitorResult, MonitorSummary, Wish } from '../types'
 
 const bySortOrder = (a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order
 
@@ -36,4 +37,48 @@ export async function getVisibleWishes(invitationId: string, limit = 50): Promis
     .limit(limit)
   if (error) throw error
   return data as Wish[]
+}
+
+type MonitorRow = {
+  groom_nickname: string
+  bride_nickname: string
+  theme: MonitorSummary['theme']
+  timezone: MonitorSummary['timezone']
+  status: MonitorSummary['status']
+  hadir: number
+  tidak: number
+  ragu: number
+  total_orang: number
+  generated_at: string
+}
+
+/**
+ * Rekap angka untuk link pantau mempelai. Tidak pernah melempar: halaman pantau harus tetap
+ * hidup (dan terus menyegarkan) saat database sedang gangguan.
+ */
+export async function getMonitorSummary(token: string): Promise<MonitorResult> {
+  if (!MONITOR_TOKEN_RE.test(token)) return { kind: 'invalid' }
+  try {
+    const { data, error } = await createPublicSupabase().rpc('monitor_summary', { p_token: token })
+    if (error) return { kind: 'error' }
+    const row = (data as MonitorRow[] | null)?.[0]
+    if (!row) return { kind: 'invalid' }
+    return {
+      kind: 'ok',
+      summary: {
+        groomNickname: row.groom_nickname,
+        brideNickname: row.bride_nickname,
+        theme: row.theme,
+        timezone: row.timezone,
+        status: row.status,
+        hadir: row.hadir,
+        tidak: row.tidak,
+        ragu: row.ragu,
+        totalOrang: row.total_orang,
+        generatedAt: row.generated_at,
+      },
+    }
+  } catch {
+    return { kind: 'error' }
+  }
 }

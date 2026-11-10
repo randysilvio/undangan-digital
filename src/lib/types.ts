@@ -87,3 +87,19 @@ export type InvitationFull = Invitation & {
   gallery: GalleryPhoto[]
   gifts: GiftAccount[]
 }
+
+/** Rekap angka untuk halaman pantau mempelai (hasil fungsi database monitor_summary). */
+export interface MonitorSummary {
+  groomNickname: string
+  brideNickname: string
+  theme: ThemeName
+  timezone: TimeZoneId
+  status: InvitationStatus
+  hadir: number
+  tidak: number
+  ragu: number
+  totalOrang: number
+  generatedAt: string
+}
+
+export type MonitorResult = { kind: 'ok'; summary: MonitorSummary } | { kind: 'invalid' } | { kind: 'error' }
