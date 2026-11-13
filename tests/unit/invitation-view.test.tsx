@@ -79,7 +79,7 @@ describe('InvitationView', () => {
 })
 
 describe('THEMES', () => {
-  it('berisi elegan dan modern', () => {
-    expect(Object.keys(THEMES)).toEqual(['elegan', 'modern'])
+  it('berisi enam tema, tema lama tetap ada', () => {
+    expect(Object.keys(THEMES)).toEqual(['elegan', 'modern', 'botani', 'mewah', 'ceria', 'pastel'])
   })
 })

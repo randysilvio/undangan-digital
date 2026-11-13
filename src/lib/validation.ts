@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { normalizePhone } from './phone'
 import { isValidSlug, RESERVED_SLUGS } from './slug'
+import { KIND_IDS } from './kinds'
+import { THEME_NAMES } from '@/themes'
 
 export type FormState = {
   status: 'idle' | 'ok' | 'error'
@@ -60,7 +62,8 @@ export const wishSchema = z.object({
   message: required(500, 'Ucapan'),
 })
 
-export const invitationSchema = z.object({
+/** Kolom formulir undangan (sebelum aturan per jenis undangan). */
+export const invitationFields = z.object({
   slug: z
     .string()
     .trim()
@@ -71,13 +74,18 @@ export const invitationSchema = z.object({
         ctx.addIssue({ code: 'custom', message: 'Hanya huruf kecil, angka, dan tanda - (3–60 karakter)' })
       }
     }),
-  theme: z.enum(['elegan', 'modern'], { error: 'Pilih tema' }),
+  kind: z.preprocess((v) => v || 'pernikahan', z.enum(KIND_IDS, { error: 'Pilih jenis undangan' })),
+  age: z.preprocess(
+    (v) => (typeof v === 'string' ? v.trim() : v) || null,
+    z.coerce.number({ error: 'Usia harus angka' }).int('Usia harus angka').min(1, 'Usia minimal 1').max(150, 'Usia maksimal 150').nullable(),
+  ),
+  theme: z.enum(THEME_NAMES, { error: 'Pilih tema' }),
   timezone: z.enum(['Asia/Jakarta', 'Asia/Makassar', 'Asia/Jayapura'], { error: 'Pilih zona waktu' }),
   groom_name: required(100),
   groom_nickname: required(30),
   groom_parents: optional(200),
-  bride_name: required(100),
-  bride_nickname: required(30),
+  bride_name: optional(100),
+  bride_nickname: optional(30),
   bride_parents: optional(200),
   opening_text: multiline(optional(1000)),
   intro_text: multiline(required(500, 'Kalimat pengantar')),
@@ -89,6 +97,24 @@ export const invitationSchema = z.object({
     ),
   ),
 })
+
+/** Pernikahan wajib punya dua mempelai; ulang tahun hanya satu orang (kolom bride_* dikosongkan). */
+export const invitationSchema = invitationFields
+  .superRefine((d, ctx) => {
+    if (d.kind !== 'pernikahan') return
+    if (!d.bride_name) ctx.addIssue({ code: 'custom', path: ['bride_name'], message: 'Wajib diisi' })
+    if (!d.bride_nickname) ctx.addIssue({ code: 'custom', path: ['bride_nickname'], message: 'Wajib diisi' })
+  })
+  .transform((d) => {
+    const wedding = d.kind === 'pernikahan'
+    return {
+      ...d,
+      age: wedding ? null : d.age,
+      bride_name: wedding ? d.bride_name : null,
+      bride_nickname: wedding ? d.bride_nickname : null,
+      bride_parents: wedding ? d.bride_parents : null,
+    }
+  })
 
 function isRealDate(s: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false

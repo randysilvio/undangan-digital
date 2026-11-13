@@ -6,6 +6,7 @@ import { MediaSlot } from '@/components/admin/MediaSlot'
 import { Card } from '@/components/admin/ui'
 import { requireAdmin } from '@/lib/auth'
 import { getInvitation } from '@/lib/data/admin'
+import { isWedding } from '@/lib/kinds'
 
 export default function MediaPage(props: PageProps<'/admin/[id]/media'>) {
   return (
@@ -32,8 +33,14 @@ async function Media({ params }: PageProps<'/admin/[id]/media'>) {
             kind="photo"
             hint="Sebaiknya foto tegak (portrait)."
           />
-          <MediaSlot invitationId={inv.id} field="groom_photo_url" label="Foto mempelai pria" url={inv.groom_photo_url} kind="photo" />
-          <MediaSlot invitationId={inv.id} field="bride_photo_url" label="Foto mempelai wanita" url={inv.bride_photo_url} kind="photo" />
+          {isWedding(inv.kind) ? (
+            <>
+              <MediaSlot invitationId={inv.id} field="groom_photo_url" label="Foto mempelai pria" url={inv.groom_photo_url} kind="photo" />
+              <MediaSlot invitationId={inv.id} field="bride_photo_url" label="Foto mempelai wanita" url={inv.bride_photo_url} kind="photo" />
+            </>
+          ) : (
+            <MediaSlot invitationId={inv.id} field="groom_photo_url" label="Foto yang berulang tahun" url={inv.groom_photo_url} kind="photo" />
+          )}
         </div>
       </Card>
       <Card title="Galeri">

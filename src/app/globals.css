@@ -9,6 +9,7 @@
   --color-inv-accent: var(--inv-accent);
   --color-inv-on-accent: var(--inv-on-accent);
   --color-inv-line: var(--inv-line);
+  --color-inv-error: var(--inv-error, #b91c1c);
   --font-heading: var(--inv-heading);
   --font-body: var(--inv-body);
   --font-names: var(--inv-names);
@@ -43,6 +44,78 @@
   --inv-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --inv-names: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --inv-cover-overlay: linear-gradient(to bottom, rgb(17 24 39 / 0.45), rgb(17 24 39 / 0.8));
+}
+
+[data-theme="botani"] {
+  --inv-bg: #eef2ea;
+  --inv-surface: #f8faf5;
+  --inv-text: #2f3b2d;
+  --inv-muted: #66735f;
+  --inv-accent: #5f7a5b;
+  --inv-on-accent: #ffffff;
+  --inv-line: #d5dfcf;
+  --inv-heading: var(--font-cormorant), Georgia, serif;
+  --inv-body: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+  --inv-names: var(--font-great-vibes), var(--font-cormorant), cursive;
+  --inv-cover-overlay: linear-gradient(to bottom, rgb(47 59 45 / 0.35), rgb(47 59 45 / 0.75));
+  color-scheme: light;
+}
+
+[data-theme="mewah"] {
+  --inv-bg: #121a2b;
+  --inv-surface: #1b2540;
+  --inv-text: #f3ead8;
+  --inv-muted: #b9b09d;
+  --inv-accent: #d4af6a;
+  --inv-on-accent: #121a2b;
+  --inv-line: #33405f;
+  --inv-error: #fca5a5;
+  --inv-cover-bg: #0b1120;
+  --inv-heading: var(--font-playfair), Georgia, serif;
+  --inv-body: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+  --inv-names: var(--font-great-vibes), var(--font-playfair), cursive;
+  --inv-cover-overlay: linear-gradient(to bottom, rgb(10 15 28 / 0.5), rgb(10 15 28 / 0.88));
+  color-scheme: dark;
+}
+
+[data-theme="ceria"] {
+  --inv-bg: #fff8e1;
+  --inv-surface: #ffffff;
+  --inv-text: #2d3561;
+  --inv-muted: #6b7099;
+  --inv-accent: #ff6b6b;
+  --inv-on-accent: #ffffff;
+  --inv-line: #ffe08a;
+  --inv-heading: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
+  --inv-body: var(--font-quicksand), ui-rounded, system-ui, sans-serif;
+  --inv-names: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
+  --inv-cover-overlay: linear-gradient(135deg, rgb(255 107 107 / 0.55), rgb(78 205 196 / 0.55), rgb(255 209 102 / 0.6));
+  color-scheme: light;
+}
+
+[data-theme="pastel"] {
+  --inv-bg: #fdf2f8;
+  --inv-surface: #fffafd;
+  --inv-text: #4a3550;
+  --inv-muted: #8a7491;
+  --inv-accent: #c0679a;
+  --inv-on-accent: #ffffff;
+  --inv-line: #f1d5e6;
+  --inv-heading: var(--font-quicksand), ui-rounded, system-ui, sans-serif;
+  --inv-body: var(--font-quicksand), ui-rounded, system-ui, sans-serif;
+  --inv-names: var(--font-pacifico), cursive;
+  --inv-cover-overlay: linear-gradient(to bottom, rgb(192 103 154 / 0.35), rgb(122 96 168 / 0.7));
+  color-scheme: light;
+}
+
+/* Nama di tema Ceria: huruf bulat tebal, bukan huruf sambung */
+[data-theme="ceria"] .font-names {
+  font-weight: 600;
+}
+
+[data-theme="ceria"] h1.font-names {
+  font-size: 3.25rem;
+  line-height: 1.1;
 }
 
 /* Nama di tema Modern: huruf kapital renggang, bukan huruf sambung */

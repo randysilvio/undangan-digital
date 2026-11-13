@@ -44,7 +44,7 @@ export function WishesForm({ invitationId, slug, guestName, wishes, disabled }: 
         <label className="block">
           <span className="mb-1 block text-sm text-inv-muted">Nama</span>
           <input name="name" required maxLength={100} defaultValue={v?.name ?? guestName ?? ''} className={guestInput} />
-          {e.name && <span className="mt-1 block text-sm text-red-700">{e.name}</span>}
+          {e.name && <span className="mt-1 block text-sm text-inv-error">{e.name}</span>}
         </label>
         <label className="block">
           <span className="mb-1 block text-sm text-inv-muted">Ucapan & doa</span>
@@ -57,10 +57,10 @@ export function WishesForm({ invitationId, slug, guestName, wishes, disabled }: 
             onChange={(x) => setMessage(x.target.value)}
             className={guestInput}
           />
-          {e.message && <span className="mt-1 block text-sm text-red-700">{e.message}</span>}
+          {e.message && <span className="mt-1 block text-sm text-inv-error">{e.message}</span>}
         </label>
         {state.status === 'error' && state.message && (
-          <p className="text-sm text-red-700" role="alert">
+          <p className="text-sm text-inv-error" role="alert">
             {state.message}
           </p>
         )}

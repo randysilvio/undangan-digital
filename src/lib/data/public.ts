@@ -41,7 +41,7 @@ export async function getVisibleWishes(invitationId: string, limit = 50): Promis
 
 type MonitorRow = {
   groom_nickname: string
-  bride_nickname: string
+  bride_nickname: string | null
   theme: MonitorSummary['theme']
   timezone: MonitorSummary['timezone']
   status: MonitorSummary['status']

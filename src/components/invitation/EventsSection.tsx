@@ -3,7 +3,7 @@ import { formatJam, formatTanggal } from '@/lib/time'
 import type { InvitationEvent, TimeZoneId } from '@/lib/types'
 import { outlineButton, Section } from './Section'
 
-export function EventsSection(props: { events: InvitationEvent[]; timezone: TimeZoneId; coupleName: string }) {
+export function EventsSection(props: { events: InvitationEvent[]; timezone: TimeZoneId; /** Judul acara di kalender, mis. "Pernikahan Budi & Ani". */ calendarTitle: string }) {
   return (
     <Section id="acara" title="Waktu & Tempat" tone="surface">
       <div className="space-y-6">
@@ -25,7 +25,7 @@ export function EventsSection(props: { events: InvitationEvent[]; timezone: Time
               )}
               <a
                 href={googleCalendarUrl({
-                  title: `${e.name} — Pernikahan ${props.coupleName}`,
+                  title: `${e.name} — ${props.calendarTitle}`,
                   date: e.date,
                   startTime: e.start_time,
                   endTime: e.end_time,

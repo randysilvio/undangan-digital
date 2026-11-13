@@ -4,7 +4,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Undangan Digital',
-  description: 'Undangan pernikahan digital',
+  description: 'Undangan digital pernikahan dan ulang tahun: link pribadi per tamu, RSVP, ucapan, dan amplop digital.',
 }
 
 export const viewport: Viewport = {

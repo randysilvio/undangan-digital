@@ -1,4 +1,4 @@
-export const RESERVED_SLUGS = ['admin', 'api', 'login', '_next', 'favicon.ico'] as const
+export const RESERVED_SLUGS = ['admin', 'api', 'login', '_next', 'favicon.ico', 'contoh', 'pantau'] as const
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const MAX_LENGTH = 60

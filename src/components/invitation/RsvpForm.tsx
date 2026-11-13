@@ -58,7 +58,7 @@ export function RsvpForm({ invitationId, slug, guestName, guestCode, disabled }:
       <label className="block">
         <span className="mb-1 block text-sm text-inv-muted">Nama</span>
         <input name="name" required maxLength={100} defaultValue={v?.name ?? guestName ?? ''} className={guestInput} />
-        {e.name && <span className="mt-1 block text-sm text-red-700">{e.name}</span>}
+        {e.name && <span className="mt-1 block text-sm text-inv-error">{e.name}</span>}
       </label>
 
       <fieldset>
@@ -83,7 +83,7 @@ export function RsvpForm({ invitationId, slug, guestName, guestCode, disabled }:
             </label>
           ))}
         </div>
-        {e.attendance && <span className="mt-1 block text-sm text-red-700">{e.attendance}</span>}
+        {e.attendance && <span className="mt-1 block text-sm text-inv-error">{e.attendance}</span>}
       </fieldset>
 
       {attendance !== 'tidak' && (
@@ -96,13 +96,13 @@ export function RsvpForm({ invitationId, slug, guestName, guestCode, disabled }:
               </option>
             ))}
           </select>
-          {e.party_size && <span className="mt-1 block text-sm text-red-700">{e.party_size}</span>}
+          {e.party_size && <span className="mt-1 block text-sm text-inv-error">{e.party_size}</span>}
         </label>
       )}
       {attendance === 'tidak' && <input type="hidden" name="party_size" value="0" />}
 
       {state.status === 'error' && state.message && (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-sm text-inv-error" role="alert">
           {state.message}
         </p>
       )}

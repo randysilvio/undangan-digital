@@ -1,3 +1,4 @@
+import { ageLabel, isWedding, KINDS } from '@/lib/kinds'
 import type { Invitation } from '@/lib/types'
 import { Section } from './Section'
 
@@ -27,7 +28,21 @@ function Person(props: { photo: string | null; name: string; nickname: string; p
   )
 }
 
+/** Tokoh utama: dua mempelai (pernikahan) atau satu orang yang berulang tahun. */
 export function CoupleSection({ invitation: i, intro }: { invitation: Invitation; intro: string }) {
+  if (!isWedding(i.kind)) {
+    const age = ageLabel(i.kind, i.age)
+    return (
+      <Section id="mempelai" title={KINDS[i.kind].personTitle} subtitle={intro}>
+        <Person photo={i.groom_photo_url} name={i.groom_name} nickname={i.groom_nickname} parents={i.groom_parents} />
+        {age && (
+          <p className="mt-6 text-center">
+            <span className="inline-block rounded-full bg-inv-accent px-5 py-2 font-heading text-lg text-inv-on-accent">{age}</span>
+          </p>
+        )}
+      </Section>
+    )
+  }
   return (
     <Section id="mempelai" title="Mempelai" subtitle={intro}>
       <div className="space-y-8">
@@ -35,7 +50,7 @@ export function CoupleSection({ invitation: i, intro }: { invitation: Invitation
         <p aria-hidden className="text-center font-names text-5xl text-inv-accent">
           &amp;
         </p>
-        <Person photo={i.bride_photo_url} name={i.bride_name} nickname={i.bride_nickname} parents={i.bride_parents} />
+        <Person photo={i.bride_photo_url} name={i.bride_name ?? ''} nickname={i.bride_nickname ?? ''} parents={i.bride_parents} />
       </div>
     </Section>
   )

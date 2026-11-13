@@ -1,4 +1,5 @@
-export type ThemeName = 'elegan' | 'modern'
+export type ThemeName = 'elegan' | 'modern' | 'botani' | 'mewah' | 'ceria' | 'pastel'
+export type InvitationKind = 'pernikahan' | 'ultah_anak' | 'sweet_seventeen' | 'ultah_dewasa' | 'ultah_syukur'
 export type TimeZoneId = 'Asia/Jakarta' | 'Asia/Makassar' | 'Asia/Jayapura'
 export type Attendance = 'hadir' | 'tidak' | 'ragu'
 export type InvitationStatus = 'draft' | 'published'
@@ -7,14 +8,18 @@ export interface Invitation {
   id: string
   slug: string
   status: InvitationStatus
+  /** Jenis undangan. Untuk ulang tahun, kolom groom_* berisi yang berulang tahun dan bride_* kosong. */
+  kind: InvitationKind
+  /** Usia yang dirayakan (ulang tahun); null untuk pernikahan. */
+  age: number | null
   theme: ThemeName
   timezone: TimeZoneId
   groom_name: string
   groom_nickname: string
   groom_parents: string | null
   groom_photo_url: string | null
-  bride_name: string
-  bride_nickname: string
+  bride_name: string | null
+  bride_nickname: string | null
   bride_parents: string | null
   bride_photo_url: string | null
   cover_photo_url: string | null
@@ -95,7 +100,8 @@ export type InvitationFull = Invitation & {
 /** Rekap angka untuk halaman pantau mempelai (hasil fungsi database monitor_summary). */
 export interface MonitorSummary {
   groomNickname: string
-  brideNickname: string
+  /** Null untuk undangan ulang tahun. */
+  brideNickname: string | null
   theme: ThemeName
   timezone: TimeZoneId
   status: InvitationStatus

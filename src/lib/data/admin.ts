@@ -29,7 +29,7 @@ export async function listInvitations(sb: SupabaseClient, search?: string): Prom
   const q = search?.trim().toLowerCase()
   if (!q) return rows
   return rows.filter((r) =>
-    [r.slug, r.groom_nickname, r.bride_nickname, r.groom_name, r.bride_name].some((v) => v.toLowerCase().includes(q)),
+    [r.slug, r.groom_nickname, r.bride_nickname, r.groom_name, r.bride_name].some((v) => v?.toLowerCase().includes(q)),
   )
 }
 

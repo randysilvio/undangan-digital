@@ -3,6 +3,7 @@ import {
   eventSchema,
   fieldErrors,
   giftSchema,
+  invitationFields,
   invitationSchema,
   parseGuestList,
   type EventInput,
@@ -38,7 +39,7 @@ function parseList<S extends z.ZodType>(items: unknown[], schema: S, prefix: str
 
 export function parseInvitationForm(fd: FormData): Parsed<{ invitation: InvitationInput; events: EventInput[] }> {
   const errors: Record<string, string> = {}
-  const inv = invitationSchema.safeParse(Object.fromEntries(Object.keys(invitationSchema.shape).map((k) => [k, String(fd.get(k) ?? '')])))
+  const inv = invitationSchema.safeParse(Object.fromEntries(Object.keys(invitationFields.shape).map((k) => [k, String(fd.get(k) ?? '')])))
   if (!inv.success) Object.assign(errors, fieldErrors(inv.error))
 
   const raw = readJsonArray(fd, 'events')

@@ -6,6 +6,8 @@ export function makeInvitation(overrides: Partial<InvitationFull> = {}): Invitat
     id,
     slug: 'budi-ani',
     status: 'published',
+    kind: 'pernikahan',
+    age: null,
     theme: 'elegan',
     timezone: 'Asia/Jayapura',
     groom_name: 'Budi Santoso',

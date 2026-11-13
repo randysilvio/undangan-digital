@@ -6,6 +6,12 @@ import { MusicToggle } from './MusicToggle'
 interface CoverGateProps {
   guestName: string | null
   coupleName: string
+  /** Baris kecil di atas nama, mis. "Undangan Pernikahan". */
+  label: string
+  /** Hiasan di atas label (boleh kosong). */
+  emoji?: string
+  /** Baris di bawah nama, mis. "Ulang Tahun ke-5". */
+  subtitle?: string | null
   dateLabel: string | null
   coverUrl: string | null
   musicUrl: string | null
@@ -15,7 +21,7 @@ interface CoverGateProps {
 }
 
 /** Sampul layar penuh. Scroll dikunci sampai tamu menekan "Buka Undangan", lalu musik diputar. */
-export function CoverGate({ guestName, coupleName, dateLabel, coverUrl, musicUrl, preview, children }: CoverGateProps) {
+export function CoverGate({ guestName, coupleName, label, emoji, subtitle, dateLabel, coverUrl, musicUrl, preview, children }: CoverGateProps) {
   const [opened, setOpened] = useState(Boolean(preview))
   const audioRef = useRef<HTMLAudioElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -42,13 +48,19 @@ export function CoverGate({ guestName, coupleName, dateLabel, coverUrl, musicUrl
     <>
       <section
         data-section="sampul"
-        className="relative flex min-h-dvh flex-col items-center justify-center bg-inv-text bg-cover bg-center px-6 py-16 text-center text-white"
+        className="relative flex min-h-dvh flex-col items-center justify-center bg-[var(--inv-cover-bg,var(--inv-text))] bg-cover bg-center px-6 py-16 text-center text-white"
         style={coverUrl ? { backgroundImage: `url("${encodeURI(coverUrl)}")` } : undefined}
       >
         <div aria-hidden className="absolute inset-0" style={{ background: 'var(--inv-cover-overlay)' }} />
         <div className="inv-fade-in relative">
-          <p className="text-sm tracking-[0.3em] uppercase opacity-90">Undangan Pernikahan</p>
+          {emoji && (
+            <p aria-hidden className="mb-3 text-4xl">
+              {emoji}
+            </p>
+          )}
+          <p className="text-sm tracking-[0.3em] uppercase opacity-90">{label}</p>
           <h1 className="mt-4 font-names text-6xl leading-tight">{coupleName}</h1>
+          {subtitle && <p className="mt-3 font-heading text-2xl">{subtitle}</p>}
           {dateLabel && <p className="mt-4 font-heading text-xl">{dateLabel}</p>}
           <div className="mt-10 rounded-2xl bg-white/10 px-6 py-4 backdrop-blur-sm">
             <p className="text-sm opacity-90">Kepada Yth.</p>
@@ -59,7 +71,7 @@ export function CoverGate({ guestName, coupleName, dateLabel, coverUrl, musicUrl
             <button
               type="button"
               onClick={open}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-inv-text shadow-lg transition hover:bg-white/90"
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-stone-800 shadow-lg transition hover:bg-white/90"
             >
               <span aria-hidden>✉</span> Buka Undangan
             </button>

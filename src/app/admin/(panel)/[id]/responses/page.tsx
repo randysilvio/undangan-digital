@@ -6,6 +6,7 @@ import { WishToggle } from '@/components/admin/WishToggle'
 import { requireAdmin } from '@/lib/auth'
 import { ATTENDANCE_LABEL } from '@/lib/csv'
 import { getInvitation, getMonitorLink, listAllWishes, listRsvps } from '@/lib/data/admin'
+import { displayName, KINDS } from '@/lib/kinds'
 import { monitorLink } from '@/lib/monitor'
 import { latestRsvps, summarizeRsvps } from '@/lib/rsvp'
 import { SITE_URL } from '@/lib/supabase/env'
@@ -44,7 +45,8 @@ async function Responses({ params }: PageProps<'/admin/[id]/responses'>) {
       <MonitorLinkCard
         invitationId={inv.id}
         link={token ? monitorLink(SITE_URL, token) : null}
-        coupleName={`${inv.groom_nickname} & ${inv.bride_nickname}`}
+        coupleName={displayName(inv)}
+        ownerLabel={KINDS[inv.kind].ownerLabel}
       />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

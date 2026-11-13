@@ -7,6 +7,8 @@ export default defineConfig({
   testDir: './e2e',
   timeout: 120_000,
   fullyParallel: false,
+  // Semua tes memakai satu server dev; dijalankan bergantian agar kompilasi halaman tidak saling memperlambat.
+  workers: 1,
   use: {
     baseURL: 'http://localhost:3000',
     ...devices['Pixel 7'],

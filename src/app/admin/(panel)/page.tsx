@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { buttonClass, inputClass, secondaryButtonClass } from '@/components/admin/ui'
 import { requireAdmin } from '@/lib/auth'
 import { listInvitations } from '@/lib/data/admin'
+import { displayName, KINDS } from '@/lib/kinds'
 import { formatTanggal } from '@/lib/time'
 import { duplicateAction } from './actions'
 
@@ -45,9 +46,8 @@ async function InvitationList({ searchParams }: { searchParams: PageProps<'/admi
             <li key={inv.id} className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="font-semibold">
-                    {inv.groom_nickname} &amp; {inv.bride_nickname}
-                  </p>
+                  <p className="font-semibold">{displayName(inv)}</p>
+                  <p className="text-xs font-medium text-amber-700">{KINDS[inv.kind].label}</p>
                   <p className="text-sm text-stone-500">/{inv.slug}</p>
                   <p className="text-xs text-stone-400">Dibuat {formatTanggal(inv.created_at.slice(0, 10))}</p>
                 </div>

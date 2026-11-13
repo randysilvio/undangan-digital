@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { AdminNav } from '@/components/admin/AdminNav'
 import { requireAdmin } from '@/lib/auth'
 import { getInvitation } from '@/lib/data/admin'
+import { displayName, KINDS } from '@/lib/kinds'
 import { SITE_URL } from '@/lib/supabase/env'
 
 export default function InvitationAdminLayout({ children, params }: LayoutProps<'/admin/[id]'>) {
@@ -29,9 +30,8 @@ async function Header({ params }: { params: LayoutProps<'/admin/[id]'>['params']
         ← Semua undangan
       </Link>
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-semibold">
-          {inv.groom_nickname} &amp; {inv.bride_nickname}
-        </h1>
+        <h1 className="text-2xl font-semibold">{displayName(inv)}</h1>
+        <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">{KINDS[inv.kind].label}</span>
         <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${published ? 'bg-green-100 text-green-800' : 'bg-stone-200 text-stone-700'}`}>
           {published ? 'Terbit' : 'Draft'}
         </span>

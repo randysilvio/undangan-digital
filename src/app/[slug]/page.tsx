@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { InvitationView } from '@/components/invitation/InvitationView'
 import { getPublishedInvitation, getVisibleWishes } from '@/lib/data/public'
+import { eventTitle } from '@/lib/kinds'
 import { parseGuestName } from '@/lib/links'
 import { earliestEvent, formatTanggal } from '@/lib/time'
 
@@ -12,9 +13,9 @@ export async function generateMetadata({ params }: PageProps<'/[slug]'>): Promis
   const { slug } = await params
   const inv = await getPublishedInvitation(slug)
   if (!inv) return { title: 'Undangan tidak ditemukan', robots: { index: false } }
-  const title = `Undangan Pernikahan ${inv.groom_nickname} & ${inv.bride_nickname}`
+  const title = `Undangan ${eventTitle(inv)}`
   const first = earliestEvent(inv.events, inv.timezone)
-  const description = first ? formatTanggal(first.date) : 'Undangan pernikahan'
+  const description = first ? formatTanggal(first.date) : `Undangan ${eventTitle(inv)}`
   const images = inv.cover_photo_url ? [{ url: inv.cover_photo_url }] : undefined
   return {
     title,

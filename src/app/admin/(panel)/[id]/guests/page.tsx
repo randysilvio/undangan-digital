@@ -8,6 +8,7 @@ import { requireAdmin } from '@/lib/auth'
 import { getInvitation, listGuests } from '@/lib/data/admin'
 import { GuestListShare } from '@/components/admin/GuestListShare'
 import { SITE_URL } from '@/lib/supabase/env'
+import { displayName, KINDS } from '@/lib/kinds'
 import { effectiveTexts } from '@/lib/text-templates'
 
 export default function GuestsPage(props: PageProps<'/admin/[id]/guests'>) {
@@ -39,9 +40,10 @@ async function Guests({ params }: PageProps<'/admin/[id]/guests'>) {
       <Card title="Tambah Tamu">
         <GuestPaste invitationId={inv.id} />
       </Card>
-      <Card title="Kirim Daftar ke Mempelai">
+      <Card title={`Kirim Daftar ke ${capitalize(KINDS[inv.kind].ownerLabel)}`}>
         <GuestListShare
-          coupleName={`${inv.groom_nickname} & ${inv.bride_nickname}`}
+          ownerLabel={KINDS[inv.kind].ownerLabel}
+          coupleName={displayName(inv)}
           siteUrl={SITE_URL}
           slug={inv.slug}
           guests={guests}
@@ -51,7 +53,7 @@ async function Guests({ params }: PageProps<'/admin/[id]/guests'>) {
         <GuestTable
           invitationId={inv.id}
           slug={inv.slug}
-          coupleName={`${inv.groom_nickname} & ${inv.bride_nickname}`}
+          coupleName={displayName(inv)}
           siteUrl={SITE_URL}
           waTemplate={effectiveTexts(inv).wa}
           guests={guests}
@@ -60,3 +62,5 @@ async function Guests({ params }: PageProps<'/admin/[id]/guests'>) {
     </div>
   )
 }
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)

@@ -22,7 +22,7 @@ export function MonitorView({ summary: s }: { summary: MonitorSummary }) {
     <Shell theme={s.theme}>
       <header className="space-y-1">
         <h1 className="font-heading text-4xl text-inv-accent [overflow-wrap:anywhere]">
-          {s.groomNickname} &amp; {s.brideNickname}
+          {s.brideNickname ? `${s.groomNickname} & ${s.brideNickname}` : s.groomNickname}
         </h1>
         <p className="text-inv-muted">Rekap Kehadiran Tamu</p>
         {s.status === 'draft' && (

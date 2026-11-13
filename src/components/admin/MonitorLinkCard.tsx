@@ -7,7 +7,19 @@ import { waShareUrl } from '@/lib/links'
 import { monitorWaMessage } from '@/lib/monitor'
 import { buttonClass, Card, dangerButtonClass, Notice, secondaryButtonClass } from './ui'
 
-export function MonitorLinkCard({ invitationId, link, coupleName }: { invitationId: string; link: string | null; coupleName: string }) {
+export function MonitorLinkCard({
+  invitationId,
+  link,
+  coupleName,
+  ownerLabel = 'mempelai',
+}: {
+  invitationId: string
+  link: string | null
+  coupleName: string
+  /** Penerima link pantau: mempelai, orang tua, keluarga, dst. */
+  ownerLabel?: string
+}) {
+  const Owner = ownerLabel.charAt(0).toUpperCase() + ownerLabel.slice(1)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
@@ -21,11 +33,11 @@ export function MonitorLinkCard({ invitationId, link, coupleName }: { invitation
   }
 
   return (
-    <Card title="Link Pantau Mempelai">
+    <Card title={`Link Pantau ${Owner}`}>
       <div className="space-y-3">
         {link ? (
           <>
-            <p className="text-sm text-stone-600">Kirim link ini ke mempelai untuk memantau rekap kehadiran tanpa login.</p>
+            <p className="text-sm text-stone-600">Kirim link ini ke {ownerLabel} untuk memantau rekap kehadiran tanpa login.</p>
             <p className="rounded-lg bg-stone-100 px-3 py-2 font-mono text-sm break-all">{link}</p>
             <div className="flex flex-wrap gap-2">
               <CopyButton text={link} label="Salin" className={secondaryButtonClass} />
@@ -49,7 +61,7 @@ export function MonitorLinkCard({ invitationId, link, coupleName }: { invitation
                 type="button"
                 disabled={pending}
                 className={dangerButtonClass}
-                onClick={() => run(disableMonitorLinkAction, 'Matikan link pantau? Mempelai tidak bisa membukanya lagi.')}
+                onClick={() => run(disableMonitorLinkAction, `Matikan link pantau? ${Owner} tidak bisa membukanya lagi.`)}
               >
                 Matikan
               </button>
@@ -57,7 +69,7 @@ export function MonitorLinkCard({ invitationId, link, coupleName }: { invitation
           </>
         ) : (
           <>
-            <p className="text-sm text-stone-600">Buat link agar mempelai bisa memantau rekap kehadiran tanpa login.</p>
+            <p className="text-sm text-stone-600">Buat link agar {ownerLabel} bisa memantau rekap kehadiran tanpa login.</p>
             <button type="button" disabled={pending} className={buttonClass} onClick={() => run(createMonitorLinkAction)}>
               Buat link
             </button>

@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { waMessage } from '@/lib/links'
-import { effectiveTexts, fillWaMessage, findTemplate, matchesTemplate, TEXT_TEMPLATES, templateTexts, type TextTemplateId } from '@/lib/text-templates'
+import { effectiveTexts, fillWaMessage, findTemplate, matchesTemplate, TEXT_TEMPLATES, templatesFor, templateTexts, type TextTemplateId } from '@/lib/text-templates'
 import { makeInvitation } from '../fixtures/invitation'
 
-const ids = Object.keys(TEXT_TEMPLATES) as TextTemplateId[]
+const ids: TextTemplateId[] = templatesFor('pernikahan')
 
 describe('TEXT_TEMPLATES', () => {
-  it('ada template Umum, Kristen, Katolik, Islam', () => {
-    expect(ids.sort()).toEqual(['islam', 'katolik', 'kristen', 'umum'])
+  it('pernikahan: ada template Umum, Kristen, Katolik, Islam', () => {
+    expect([...ids].sort()).toEqual(['islam', 'katolik', 'kristen', 'umum'])
   })
 
   it('setiap pesan WA memuat {tamu}, {mempelai}, dan {link}', () => {
