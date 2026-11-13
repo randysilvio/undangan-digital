@@ -1,14 +1,12 @@
 # Link Pantau Mempelai Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Mempelai membuka satu link rahasia per undangan dan melihat 4 angka rekap RSVP yang menyegarkan sendiri, tanpa login.
 
 **Architecture:** Kode link disimpan di tabel khusus admin (`invitation_monitor_links`). Halaman publik `/pantau/[token]` memanggil fungsi Postgres `security definer` `monitor_summary(p_token)` lewat klien anon; fungsi itu hanya mengembalikan angka, sehingga nama tamu tidak pernah keluar dari database. Admin mengelola link dari tab RSVP & Ucapan lewat server action.
 
 **Tech Stack:** Next.js 16 (App Router, `cacheComponents`), Supabase (Postgres + RLS, `@supabase/supabase-js`), Tailwind 4, Vitest, Playwright.
 
-**Spec:** `docs/superpowers/specs/2026-11-10-pantau-mempelai-design.md`
+**Spec:** [docs/rancangan/2026-11-10-pantau-mempelai.md](../rancangan/2026-11-10-pantau-mempelai.md)
 
 ## Global Constraints
 

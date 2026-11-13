@@ -1,14 +1,12 @@
 # Undangan Digital (Tahap 1) Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Web undangan pernikahan digital. Admin membuat undangan lewat formulir; tamu membuka link pribadi, lalu mengisi RSVP dan ucapan.
 
 **Architecture:** Next.js (App Router, server components, server actions) di Vercel. Supabase dipakai untuk Postgres, Auth, dan Storage, dengan Row Level Security sebagai batas keamanan. Logika murni (slug, link, waktu, CSV, validasi) ada di `src/lib` dan diuji dengan Vitest. Tema = konfigurasi + token CSS di atas komponen bagian yang sama.
 
 **Tech Stack:** Next.js (versi terbaru dari `create-next-app`), React, TypeScript strict, Tailwind CSS v4, `@supabase/supabase-js`, `@supabase/ssr`, `zod`, `browser-image-compression`, Vitest, Playwright, Supabase CLI via `npx` (hanya untuk `db push --db-url`; tidak perlu Docker).
 
-**Spec:** [docs/superpowers/specs/2026-11-10-undangan-digital-design.md](../specs/2026-11-10-undangan-digital-design.md)
+**Spec:** [docs/rancangan/2026-11-10-undangan-digital.md](../rancangan/2026-11-10-undangan-digital.md)
 
 ## Global Constraints
 

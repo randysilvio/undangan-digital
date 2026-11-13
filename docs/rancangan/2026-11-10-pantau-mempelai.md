@@ -1,6 +1,6 @@
 # Rancangan: Link Pantau Mempelai
 
-Tanggal: 2026-11-10 · Lanjutan dari [rancangan tahap 1](2026-11-10-undangan-digital-design.md)
+Tanggal: 2026-11-10 · Lanjutan dari [rancangan tahap 1](2026-11-10-undangan-digital.md)
 
 ## 1. Tujuan
 
