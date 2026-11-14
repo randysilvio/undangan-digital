@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { timeLeft } from '@/lib/time'
 
 const UNITS = [
@@ -29,9 +29,22 @@ export function Countdown({ target }: { target: string }) {
 
   return (
     <div className="grid grid-cols-4 gap-2" aria-live="off">
-      {UNITS.map(([key, label]) => (
-        <div key={key} className="rounded-xl border border-inv-line bg-inv-surface px-1 py-3 text-center">
-          <p className="font-heading text-3xl text-inv-accent tabular-nums">{left ? String(left[key]).padStart(2, '0') : '--'}</p>
+      {UNITS.map(([key, label], i) => (
+        <div
+          key={key}
+          data-reveal="zoom"
+          style={{ '--d': `${i * 90}ms` } as CSSProperties}
+          className="overflow-hidden rounded-xl border border-inv-line bg-inv-surface px-1 py-3 text-center shadow-sm"
+        >
+          <p className="font-heading text-3xl text-inv-accent tabular-nums">
+            {left ? (
+              <span key={left[key]} className="inv-tick inline-block">
+                {String(left[key]).padStart(2, '0')}
+              </span>
+            ) : (
+              '--'
+            )}
+          </p>
           <p className="text-xs text-inv-muted">{label}</p>
         </div>
       ))}

@@ -34,7 +34,7 @@ export function CopyButton({ text, label = 'Salin', className }: { text: string;
       }}
       className={className}
     >
-      {copied ? 'Tersalin ✓' : label}
+      {copied ? 'Tersalin' : label}
     </button>
   )
 }

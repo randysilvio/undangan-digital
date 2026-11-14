@@ -24,6 +24,9 @@ export function makeInvitation(overrides: Partial<InvitationFull> = {}): Invitat
     closing_text: null,
     wa_message: null,
     music_url: null,
+    story: [],
+    family: null,
+    dress_code: null,
     created_at: '2026-11-01T00:00:00Z',
     events: [
       {

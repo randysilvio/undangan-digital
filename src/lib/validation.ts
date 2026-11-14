@@ -90,6 +90,8 @@ export const invitationFields = z.object({
   opening_text: multiline(optional(1000)),
   intro_text: multiline(required(500, 'Kalimat pengantar')),
   closing_text: multiline(required(500, 'Kalimat penutup')),
+  family: multiline(optional(1500)),
+  dress_code: optional(200),
   wa_message: multiline(
     required(1500, 'Pesan WhatsApp').refine(
       (s) => s.includes('{link}'),
@@ -148,6 +150,12 @@ export const eventSchema = z
     }
   })
 
+export const storySchema = z.object({
+  year: optional(20).transform((v) => v ?? ''),
+  title: required(80, 'Judul'),
+  text: multiline(optional(400)).transform((v) => v ?? ''),
+})
+
 export const giftSchema = z.object({
   provider: required(50),
   account_number: z
@@ -159,6 +167,7 @@ export const giftSchema = z.object({
 
 export type InvitationInput = z.infer<typeof invitationSchema>
 export type EventInput = z.infer<typeof eventSchema>
+export type StoryInput = z.infer<typeof storySchema>
 export type GiftInput = z.infer<typeof giftSchema>
 
 /** Daftar tamu: satu nama per baris, nomor WA opsional setelah koma terakhir. */

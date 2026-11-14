@@ -82,3 +82,27 @@ describe('parseGiftsForm', () => {
     expect(r.fieldErrors).toMatchObject({ 'gifts.0.provider': 'Wajib diisi', 'gifts.0.account_number': 'Nomor hanya angka (5–30 digit)' })
   })
 })
+
+describe('parseInvitationForm: cerita, keluarga, dress code', () => {
+  it('membaca cerita, keluarga, dan dress code', () => {
+    const story = [{ year: '1957', title: ' Lahir di Klaten ', text: 'Anak ketiga\r\ndari tujuh' }]
+    const r = parseInvitationForm(fd({ ...base, story: JSON.stringify(story), family: 'Budi & Ani\r\nSari', dress_code: ' Batik ' }))
+    expect(r.fieldErrors).toBeUndefined()
+    expect(r.data?.invitation.story).toEqual([{ year: '1957', title: 'Lahir di Klaten', text: 'Anak ketiga\ndari tujuh' }])
+    expect(r.data?.invitation.family).toBe('Budi & Ani\nSari')
+    expect(r.data?.invitation.dress_code).toBe('Batik')
+  })
+  it('tanpa cerita: daftar kosong, keluarga & dress code null', () => {
+    const r = parseInvitationForm(fd(base))
+    expect(r.data?.invitation).toMatchObject({ story: [], family: null, dress_code: null })
+  })
+  it('judul cerita wajib, error diberi kunci story.<urutan>.<field>', () => {
+    const r = parseInvitationForm(fd({ ...base, story: JSON.stringify([{ year: '2020', title: '', text: '' }]) }))
+    expect(r.fieldErrors?.['story.0.title']).toBe('Judul wajib diisi')
+  })
+  it('maksimal 12 cerita dan JSON rusak ditolak', () => {
+    const many = JSON.stringify(Array(13).fill({ year: '', title: 'A', text: '' }))
+    expect(parseInvitationForm(fd({ ...base, story: many })).fieldErrors?.story).toBe('Maksimal 12 cerita')
+    expect(parseInvitationForm(fd({ ...base, story: '{' })).fieldErrors?.story).toBe('Data cerita tidak valid')
+  })
+})

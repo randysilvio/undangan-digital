@@ -1,6 +1,6 @@
 import { KIND_IDS, KINDS } from './kinds'
 import { defaultTemplate, templateTexts } from './text-templates'
-import type { InvitationEvent, InvitationFull, InvitationKind, ThemeName, Wish } from './types'
+import type { InvitationEvent, InvitationFull, InvitationKind, StoryItem, ThemeName, Wish } from './types'
 
 /** Jenis undangan di URL contoh memakai tanda hubung: /contoh/ultah-anak/ceria. */
 export const kindSlug = (k: InvitationKind) => k.replace(/_/g, '-')
@@ -34,6 +34,46 @@ const VENUES: Record<InvitationKind, { venue: string; address: string; times: [s
   sweet_seventeen: { venue: 'Ballroom Hotel Bintang', address: 'Jl. Sudirman No. 21, Surabaya', times: [['19:00', '22:00']] },
   ultah_dewasa: { venue: 'Restoran Teras Senja', address: 'Jl. Pantai Indah No. 3, Makassar', times: [['18:30', null]] },
   ultah_syukur: { venue: 'Kediaman Keluarga Riyadi', address: 'Jl. Cendana No. 12, Yogyakarta', times: [['10:00', '11:30'], ['11:30', '14:00']] },
+}
+
+const EXTRAS: Record<InvitationKind, { story: StoryItem[]; family: string | null; dress_code: string | null }> = {
+  pernikahan: {
+    story: [
+      { year: '2019', title: 'Pertama bertemu', text: 'Berawal dari satu kelompok KKN di sebuah desa di Garut.' },
+      { year: '2022', title: 'Lamaran', text: 'Disaksikan kedua keluarga besar, Budi melamar Ani.' },
+      { year: '2027', title: 'Hari bahagia', text: 'Kami memutuskan melangkah bersama dalam ikatan pernikahan.' },
+    ],
+    family: 'Keluarga Besar Bapak Slamet\nKeluarga Besar Bapak Joko',
+    dress_code: null,
+  },
+  ultah_anak: {
+    story: [
+      { year: '2022', title: 'Hari pertama Kayla', text: 'Lahir dengan berat 3,2 kg di Bandung.' },
+      { year: '2023', title: 'Langkah pertama', text: 'Mulai berjalan di usia 11 bulan.' },
+      { year: '2026', title: 'Masuk TK', text: 'Kini sudah pandai bernyanyi dan menggambar.' },
+    ],
+    family: null,
+    dress_code: 'Kostum superhero atau putri',
+  },
+  sweet_seventeen: {
+    story: [
+      { year: '2010', title: 'Lahir di Surabaya', text: '' },
+      { year: '2022', title: 'Juara lomba piano', text: 'Tingkat provinsi Jawa Timur.' },
+    ],
+    family: null,
+    dress_code: 'Nuansa merah muda dan putih',
+  },
+  ultah_dewasa: { story: [], family: null, dress_code: 'Semi formal, nuansa hitam & emas' },
+  ultah_syukur: {
+    story: [
+      { year: '1957', title: 'Lahir di Klaten', text: 'Anak ketiga dari tujuh bersaudara.' },
+      { year: '1983', title: 'Menikah dengan Oma Sri', text: 'Membangun keluarga dengan penuh kasih.' },
+      { year: '2015', title: 'Purnabakti', text: '32 tahun mengabdi sebagai guru.' },
+      { year: '2027', title: '70 tahun penuh syukur', text: 'Dikelilingi 3 anak, 3 menantu, dan 7 cucu.' },
+    ],
+    family: 'Ir. Budi Riyadi & Ani\ndr. Sari Riyadi & Hendra\nDewi Riyadi, S.E. & Agus\nCucu: Kayla, Bima, Naura, Raka, Dinda, Tio, Ayu',
+    dress_code: 'Batik',
+  },
 }
 
 const DATE = '2027-08-14'
@@ -74,6 +114,7 @@ export function demoInvitation(kind: InvitationKind, theme: ThemeName): Invitati
     closing_text: t.closing,
     wa_message: t.wa,
     music_url: null,
+    ...EXTRAS[kind],
     created_at: '2027-01-01T00:00:00Z',
     events: demoEvents(kind, id),
     gallery: [],

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, type RefObject } from 'react'
+import { Icon } from '@/components/icons'
 
 export function MusicToggle({ src, visible, audioRef }: { src: string; visible: boolean; audioRef: RefObject<HTMLAudioElement | null> }) {
   const [playing, setPlaying] = useState(false)
@@ -29,11 +30,17 @@ export function MusicToggle({ src, visible, audioRef }: { src: string; visible: 
           type="button"
           aria-label={playing ? 'Jeda musik' : 'Putar musik'}
           onClick={toggle}
-          className="fixed right-4 bottom-4 z-40 flex size-12 items-center justify-center rounded-full bg-inv-accent text-lg text-inv-on-accent shadow-lg"
+          className="fixed right-4 bottom-4 z-40 flex size-12 items-center justify-center rounded-full bg-inv-accent text-inv-on-accent shadow-lg ring-4 ring-inv-accent/20 transition hover:scale-105"
         >
-          <span aria-hidden className={playing ? 'inline-block animate-[spin_4s_linear_infinite]' : ''}>
-            {playing ? '♫' : '▶'}
-          </span>
+          {playing ? (
+            <span aria-hidden className="inv-eq flex h-4 items-end gap-[3px]">
+              <span className="h-full" />
+              <span className="h-full" />
+              <span className="h-full" />
+            </span>
+          ) : (
+            <Icon name="music" className="size-5" />
+          )}
         </button>
       )}
     </>

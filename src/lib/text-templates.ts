@@ -143,7 +143,7 @@ export const TEXT_TEMPLATES: Record<TextTemplateId, Template> = {
       greeting: 'Halo,',
       invite: 'Dengan penuh sukacita, kami mengundang Bapak/Ibu/Saudara/i beserta putra-putri untuk hadir di pesta ulang tahun:',
       hope: 'Kehadiran Bapak/Ibu/Saudara/i dan adik-adik akan membuat hari ini semakin meriah.',
-      farewell: 'Terima kasih! 🎈',
+      farewell: 'Terima kasih!',
     }),
   },
   anak_kristen: {
@@ -157,7 +157,7 @@ export const TEXT_TEMPLATES: Record<TextTemplateId, Template> = {
       greeting: 'Shalom,',
       invite: 'Dengan sukacita dan ucapan syukur kepada Tuhan, kami mengundang Bapak/Ibu/Saudara/i beserta putra-putri untuk hadir di pesta ulang tahun:',
       hope: 'Kehadiran dan doa Bapak/Ibu/Saudara/i akan menjadi sukacita bagi kami.',
-      farewell: 'Tuhan memberkati. 🎈',
+      farewell: 'Tuhan memberkati.',
     }),
   },
   anak_islam: {
@@ -182,7 +182,7 @@ export const TEXT_TEMPLATES: Record<TextTemplateId, Template> = {
     intro: 'Tujuh belas tahun hanya datang sekali. Dengan penuh sukacita, aku mengundangmu untuk merayakan malam spesialku:',
     opening: '',
     closing: 'Kehadiranmu akan membuat malam ini jadi kenangan yang tak terlupakan. Sampai jumpa!',
-    wa: `Hai *{tamu}*! ✨
+    wa: `Hai *{tamu}*!
 
 Tujuh belas tahun hanya datang sekali, dan aku ingin merayakannya bersamamu:
 
@@ -191,7 +191,7 @@ Tujuh belas tahun hanya datang sekali, dan aku ingin merayakannya bersamamu:
 Ini link undangannya:
 {link}
 
-Jangan lupa konfirmasi kehadiran ya. Sampai jumpa! 💖`,
+Jangan lupa konfirmasi kehadiran ya. Sampai jumpa!`,
   },
 
   // ── Ulang tahun dewasa ─────────────────────────────────────────────────

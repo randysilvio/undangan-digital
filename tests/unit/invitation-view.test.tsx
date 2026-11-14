@@ -78,6 +78,38 @@ describe('InvitationView', () => {
   })
 })
 
+describe('InvitationView: cerita, keluarga, dress code, animasi', () => {
+  it('menyembunyikan cerita dan keluarga bila kosong', () => {
+    const out = html()
+    expect(out).not.toContain('data-section="cerita"')
+    expect(out).not.toContain('data-section="keluarga"')
+    expect(out).not.toContain('Dress code')
+  })
+  it('menampilkan garis waktu, keluarga per baris, dan dress code', () => {
+    const out = html({
+      kind: 'ultah_syukur',
+      age: 70,
+      bride_name: null,
+      bride_nickname: null,
+      story: [{ year: '1957', title: 'Lahir di Klaten', text: '' }],
+      family: 'Budi & Ani\n\nSari & Hendra',
+      dress_code: 'Batik',
+    })
+    expect(out).toContain('data-section="cerita"')
+    expect(out).toContain('Perjalanan Hidup')
+    expect(out).toContain('Lahir di Klaten')
+    expect(out).toContain('Anak, Menantu &amp; Cucu')
+    expect(out.match(/<li[^>]*class="font-heading text-lg/g)).toHaveLength(2)
+    expect(out).toContain('Batik')
+  })
+  it('tanpa emoji; ikon berupa SVG dan partikel sesuai tema', () => {
+    const out = html({ kind: 'ultah_anak', age: 5, bride_name: null, bride_nickname: null, theme: 'ceria' })
+    expect(out).not.toMatch(/[✀-➿\u{1F000}-\u{1FFFF}]/u)
+    expect(out).toContain('class="inv-ambient" data-mode="rise"')
+    expect(html({ theme: 'modern' })).not.toContain('inv-ambient')
+  })
+})
+
 describe('THEMES', () => {
   it('berisi enam tema, tema lama tetap ada', () => {
     expect(Object.keys(THEMES)).toEqual(['elegan', 'modern', 'botani', 'mewah', 'ceria', 'pastel'])

@@ -1,3 +1,4 @@
+import type { IconName } from '@/components/icons'
 import type { InvitationKind, ThemeName } from './types'
 
 export interface KindConfig {
@@ -7,8 +8,14 @@ export interface KindConfig {
   description: string
   /** Baris kecil di atas nama pada sampul. */
   coverLabel: string
-  /** Hiasan kecil di sampul (kosong = tidak ada). */
-  coverEmoji: string
+  /** Ikon khas jenis undangan (sampul, halaman depan, formulir). */
+  motif: IconName
+  /** Judul bagian cerita/perjalanan. */
+  storyTitle: string
+  /** Judul bagian keluarga. */
+  familyTitle: string
+  /** Efek perayaan saat undangan dibuka. */
+  celebrate: boolean
   /** Judul bagian tokoh utama. */
   personTitle: string
   countdownTitle: string
@@ -29,7 +36,10 @@ export const KINDS: Record<InvitationKind, KindConfig> = {
     label: 'Pernikahan',
     description: 'Akad/pemberkatan dan resepsi, lengkap dengan data kedua mempelai.',
     coverLabel: 'Undangan Pernikahan',
-    coverEmoji: '',
+    motif: 'rings',
+    storyTitle: 'Kisah Kami',
+    familyTitle: 'Turut Mengundang',
+    celebrate: false,
     personTitle: 'Mempelai',
     countdownTitle: 'Menuju Hari Bahagia',
     signOff: 'Kami yang berbahagia,',
@@ -43,7 +53,10 @@ export const KINDS: Record<InvitationKind, KindConfig> = {
     label: 'Ulang Tahun Anak',
     description: 'Pesta ulang tahun si kecil: ceria, penuh warna, dengan usia yang dirayakan.',
     coverLabel: 'Undangan Ulang Tahun',
-    coverEmoji: '🎈🎂🎉',
+    motif: 'balloon',
+    storyTitle: 'Cerita Si Kecil',
+    familyTitle: 'Keluarga Besar',
+    celebrate: true,
     personTitle: 'Yang Berulang Tahun',
     countdownTitle: 'Menuju Pesta Ulang Tahun',
     signOff: 'Sampai jumpa di pesta,',
@@ -57,7 +70,10 @@ export const KINDS: Record<InvitationKind, KindConfig> = {
     label: 'Sweet Seventeen',
     description: 'Perayaan usia 17 tahun untuk remaja, manis dan berkesan.',
     coverLabel: 'Sweet Seventeen',
-    coverEmoji: '✨',
+    motif: 'crown',
+    storyTitle: 'Perjalanan 17 Tahun',
+    familyTitle: 'Keluarga & Sahabat',
+    celebrate: true,
     personTitle: 'Yang Berulang Tahun',
     countdownTitle: 'Menuju Malam Spesial',
     signOff: 'Dengan penuh sukacita,',
@@ -71,7 +87,10 @@ export const KINDS: Record<InvitationKind, KindConfig> = {
     label: 'Ulang Tahun Dewasa',
     description: 'Ulang tahun ke-20, 30, 40 dan seterusnya: makan malam, pesta, atau kumpul santai.',
     coverLabel: 'Undangan Ulang Tahun',
-    coverEmoji: '🥂',
+    motif: 'glasses',
+    storyTitle: 'Perjalanan Hidup',
+    familyTitle: 'Keluarga & Sahabat',
+    celebrate: true,
     personTitle: 'Yang Berulang Tahun',
     countdownTitle: 'Menuju Hari Spesial',
     signOff: 'Salam hangat,',
@@ -85,7 +104,10 @@ export const KINDS: Record<InvitationKind, KindConfig> = {
     label: 'Syukuran Ulang Tahun',
     description: 'Syukuran usia emas orang tua atau kakek-nenek (50, 60, 70 tahun) bersama keluarga.',
     coverLabel: 'Undangan Syukuran',
-    coverEmoji: '🌿',
+    motif: 'branch',
+    storyTitle: 'Perjalanan Hidup',
+    familyTitle: 'Anak, Menantu & Cucu',
+    celebrate: false,
     personTitle: 'Yang Kami Syukuri',
     countdownTitle: 'Menuju Hari Syukur',
     signOff: 'Kami sekeluarga,',

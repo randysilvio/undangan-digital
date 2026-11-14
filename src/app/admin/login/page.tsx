@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { LoginForm } from './LoginForm'
 
-export const metadata: Metadata = { title: 'Masuk — Panel Undangan', robots: { index: false } }
+export const metadata: Metadata = { title: 'Masuk · Panel Undangan', robots: { index: false } }
 
 export default function LoginPage({ searchParams }: PageProps<'/admin/login'>) {
   return (

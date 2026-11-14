@@ -8,6 +8,7 @@ const bySortOrder = (a: { sort_order: number }, b: { sort_order: number }) => a.
 export function normalizeInvitation(row: InvitationFull): InvitationFull {
   return {
     ...row,
+    story: Array.isArray(row.story) ? row.story : [],
     events: [...(row.events ?? [])].sort(bySortOrder),
     gallery: [...(row.gallery ?? [])].sort(bySortOrder),
     gifts: [...(row.gifts ?? [])].sort(bySortOrder),

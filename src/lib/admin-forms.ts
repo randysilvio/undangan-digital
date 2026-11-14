@@ -6,15 +6,18 @@ import {
   invitationFields,
   invitationSchema,
   parseGuestList,
+  storySchema,
   type EventInput,
   type GiftInput,
   type InvitationInput,
+  type StoryInput,
 } from './validation'
 
 type Parsed<T> = { data: T; fieldErrors?: undefined } | { data?: undefined; fieldErrors: Record<string, string> }
 
 const MAX_EVENTS = 10
 const MAX_GIFTS = 10
+const MAX_STORY = 12
 
 function readJsonArray(fd: FormData, key: string): unknown[] | null {
   try {
@@ -37,7 +40,7 @@ function parseList<S extends z.ZodType>(items: unknown[], schema: S, prefix: str
   return { data, errors }
 }
 
-export function parseInvitationForm(fd: FormData): Parsed<{ invitation: InvitationInput; events: EventInput[] }> {
+export function parseInvitationForm(fd: FormData): Parsed<{ invitation: InvitationInput & { story: StoryInput[] }; events: EventInput[] }> {
   const errors: Record<string, string> = {}
   const inv = invitationSchema.safeParse(Object.fromEntries(Object.keys(invitationFields.shape).map((k) => [k, String(fd.get(k) ?? '')])))
   if (!inv.success) Object.assign(errors, fieldErrors(inv.error))
@@ -52,8 +55,18 @@ export function parseInvitationForm(fd: FormData): Parsed<{ invitation: Invitati
     events = r.data
   }
 
+  const rawStory = readJsonArray(fd, 'story')
+  let story: StoryInput[] = []
+  if (rawStory === null) errors.story = 'Data cerita tidak valid'
+  else if (rawStory.length > MAX_STORY) errors.story = `Maksimal ${MAX_STORY} cerita`
+  else {
+    const r = parseList(rawStory, storySchema, 'story')
+    Object.assign(errors, r.errors)
+    story = r.data
+  }
+
   if (Object.keys(errors).length || !inv.success) return { fieldErrors: errors }
-  return { data: { invitation: inv.data, events } }
+  return { data: { invitation: { ...inv.data, story }, events } }
 }
 
 const MAX_GUEST_PASTE = 500

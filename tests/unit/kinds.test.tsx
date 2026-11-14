@@ -6,7 +6,7 @@ import { demoInvitation, kindFromSlug, kindSlug } from '@/lib/demo'
 import { ageLabel, displayName, eventTitle, KIND_IDS, KINDS } from '@/lib/kinds'
 import { defaultTemplate, fillWaMessage, TEXT_TEMPLATES, templatesFor, type TextTemplateId } from '@/lib/text-templates'
 import type { InvitationFull } from '@/lib/types'
-import { invitationSchema } from '@/lib/validation'
+import { invitationSchema, storySchema } from '@/lib/validation'
 import { THEME_NAMES, THEMES } from '@/themes'
 import { makeInvitation } from '../fixtures/invitation'
 
@@ -170,8 +170,11 @@ describe('contoh undangan', () => {
         bride_nickname: d.bride_nickname ?? '',
         bride_parents: d.bride_parents ?? '',
         opening_text: d.opening_text ?? '',
+        family: d.family ?? '',
+        dress_code: d.dress_code ?? '',
       })
       expect(r.success, k).toBe(true)
+      for (const s of d.story) expect(storySchema.safeParse(s).success, `${k}: ${s.title}`).toBe(true)
     }
   })
 })

@@ -3,7 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { guestCode } from '../links'
 import { nextAvailableSlug } from '../slug'
 import type { Guest, Invitation, InvitationFull, InvitationStatus, Rsvp, Wish } from '../types'
-import type { EventInput, GiftInput, InvitationInput } from '../validation'
+import type { EventInput, GiftInput, InvitationInput, StoryInput } from '../validation'
 import { FULL_SELECT, normalizeInvitation } from './public'
 
 type DbError = { code?: string; message?: string }
@@ -16,7 +16,7 @@ function withoutKeys(obj: object, keys: string[]): Record<string, unknown> {
   return Object.fromEntries(Object.entries(obj).filter(([k]) => !keys.includes(k)))
 }
 
-export type InvitationSummary =Invitation & { rsvp_count: number }
+export type InvitationSummary = Invitation & { rsvp_count: number }
 
 /** Semua undangan (terbaru dulu), disaring di server aplikasi agar aman dari karakter khusus. */
 export async function listInvitations(sb: SupabaseClient, search?: string): Promise<InvitationSummary[]> {
@@ -42,7 +42,7 @@ export async function getInvitation(sb: SupabaseClient, id: string): Promise<Inv
   return data ? normalizeInvitation(data as InvitationFull) : null
 }
 
-export async function saveInvitation(sb: SupabaseClient, input: InvitationInput, id?: string): Promise<Result<{ id: string }>> {
+export async function saveInvitation(sb: SupabaseClient, input: InvitationInput & { story?: StoryInput[] }, id?: string): Promise<Result<{ id: string }>> {
   const query = id ? sb.from('invitations').update(input).eq('id', id) : sb.from('invitations').insert(input)
   const { data, error } = await query.select('id').single()
   return error ? fail(error) : ok({ id: data.id as string })

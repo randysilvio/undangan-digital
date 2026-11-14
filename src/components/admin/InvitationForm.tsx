@@ -9,7 +9,9 @@ import { TIMEZONES } from '@/lib/time'
 import type { InvitationFull, InvitationKind, ThemeName } from '@/lib/types'
 import { initialFormState } from '@/lib/validation'
 import { THEMES } from '@/themes'
+import { Icon } from '@/components/icons'
 import { EventsEditor, eventsPayload, newEventDraft, type EventDraft } from './EventsEditor'
+import { ExtrasEditor } from './ExtrasEditor'
 import { TextsEditor } from './TextsEditor'
 import { buttonClass, Card, Field, inputClass, Notice } from './ui'
 
@@ -115,8 +117,8 @@ export function InvitationForm({ invitation, siteUrl }: { invitation?: Invitatio
               >
                 <input type="radio" name="kind" value={id} checked={kind === id} onChange={() => onKind(id)} className="mt-1" />
                 <span>
-                  <span className="block font-medium">
-                    {KINDS[id].coverEmoji && <span aria-hidden>{KINDS[id].coverEmoji.slice(0, 2)} </span>}
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <Icon name={KINDS[id].motif} className="size-4 text-amber-700" />
                     {KINDS[id].label}
                   </span>
                   <span className="block text-sm text-stone-500">{KINDS[id].description}</span>
@@ -277,6 +279,14 @@ export function InvitationForm({ invitation, siteUrl }: { invitation?: Invitatio
             </select>
           </Field>
         </div>
+      </Card>
+
+      <Card title="Cerita, Keluarga & Dress Code">
+        <ExtrasEditor
+          kind={kind}
+          initial={invitation ? { story: invitation.story ?? [], family: invitation.family, dress_code: invitation.dress_code } : undefined}
+          errors={e}
+        />
       </Card>
 
       <Card title="Teks Undangan">

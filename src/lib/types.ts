@@ -4,6 +4,13 @@ export type TimeZoneId = 'Asia/Jakarta' | 'Asia/Makassar' | 'Asia/Jayapura'
 export type Attendance = 'hadir' | 'tidak' | 'ragu'
 export type InvitationStatus = 'draft' | 'published'
 
+export interface StoryItem {
+  /** Tahun atau penanda waktu, mis. "1955" atau "Juni 2020". */
+  year: string
+  title: string
+  text: string
+}
+
 export interface Invitation {
   id: string
   slug: string
@@ -29,6 +36,11 @@ export interface Invitation {
   closing_text: string | null
   wa_message: string | null
   music_url: string | null
+  /** Cerita / perjalanan hidup (urut). */
+  story: StoryItem[]
+  /** Daftar keluarga, satu nama per baris. */
+  family: string | null
+  dress_code: string | null
   created_at: string
 }
 

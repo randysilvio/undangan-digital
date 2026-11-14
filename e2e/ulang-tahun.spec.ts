@@ -16,10 +16,13 @@ test.afterAll(async () => {
 
 test('halaman depan dan contoh undangan bisa dibuka', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { name: 'Jenis Undangan' })).toBeVisible()
-  await page.getByRole('link', { name: 'Contoh Ceria' }).first().click()
+  await expect(page.getByRole('heading', { name: 'Lima acara, satu cara kirim.' })).toBeVisible()
+  await page.locator('#jenis').getByRole('link', { name: 'Ceria' }).click()
   await expect(page).toHaveURL(/\/contoh\/ultah-anak\/ceria$/)
   await expect(page.getByText('Ulang Tahun ke-5').first()).toBeVisible()
+  await page.getByRole('button', { name: 'Buka Undangan' }).click()
+  await expect(page.getByRole('heading', { name: 'Cerita Si Kecil' })).toBeVisible()
+  await expect(page.getByText('Kostum superhero atau putri')).toBeVisible()
   await page.getByRole('link', { name: 'Mewah' }).click()
   await expect(page).toHaveURL(/\/contoh\/ultah-anak\/mewah$/)
   await expect(page.locator('main[data-theme="mewah"]')).toBeVisible()

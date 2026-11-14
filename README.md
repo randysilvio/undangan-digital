@@ -1,12 +1,14 @@
 # Undangan Digital
 
-Web undangan pernikahan digital untuk bisnis jasa undangan. Admin (pemilik bisnis) membuat undangan
-tiap pasangan lewat formulir, dan setiap tamu menerima link pribadi berisi namanya.
+Web undangan digital untuk bisnis jasa undangan: pernikahan, ulang tahun anak, sweet seventeen,
+ulang tahun dewasa, dan syukuran usia emas. Admin (pemilik bisnis) membuat undangan lewat formulir,
+dan setiap tamu menerima link pribadi berisi namanya.
 
 **Fitur:**
 - **Halaman tamu:** sampul bernama tamu, musik, hitung mundur, acara + peta + simpan ke kalender,
-  galeri, amplop digital, RSVP, ucapan.
-- **Tema:** Elegan dan Modern.
+  galeri, cerita/perjalanan hidup, keluarga, dress code, amplop digital, RSVP, ucapan. Animasi muncul
+  saat digulir, partikel per tema (kelopak, daun, balon, serbuk emas), dan konfeti untuk ulang tahun.
+- **Tema:** Elegan, Modern, Botani, Mewah, Ceria, dan Pastel, masing-masing dengan ornamen sendiri.
 - **Panel admin:** buat/ubah/duplikat/terbitkan undangan, unggah foto & musik, daftar tamu +
   tombol kirim WhatsApp, rekap RSVP + unduh CSV, moderasi ucapan.
 

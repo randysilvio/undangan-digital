@@ -35,11 +35,13 @@ export function GalleryLightbox({ photos }: { photos: GalleryPhoto[] }) {
             key={p.id}
             type="button"
             onClick={() => setIndex(i)}
+            data-reveal="zoom"
+            style={{ ['--d' as string]: `${(i % 4) * 90}ms` }}
             className={`overflow-hidden rounded-lg ${i % 3 === 0 ? 'col-span-2 aspect-[4/3]' : 'aspect-square'}`}
             aria-label={`Perbesar foto ${i + 1}`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- foto unggahan sudah dikompres */}
-            <img src={p.url} alt={`Foto ${i + 1}`} loading="lazy" className="size-full object-cover transition hover:scale-105" />
+            <img src={p.url} alt={`Foto ${i + 1}`} loading="lazy" className="size-full object-cover transition duration-700 hover:scale-110" />
           </button>
         ))}
       </div>
