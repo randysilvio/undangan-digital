@@ -2,7 +2,7 @@
 
 import { startTransition, useActionState, useState, type FormEvent } from 'react'
 import { saveInvitationAction } from '@/app/admin/(panel)/actions'
-import { isWedding, KIND_IDS, KINDS } from '@/lib/kinds'
+import { isWedding, JOINT_LABEL, KIND_IDS, KINDS } from '@/lib/kinds'
 import { slugify } from '@/lib/slug'
 import { effectiveTexts } from '@/lib/text-templates'
 import { TIMEZONES } from '@/lib/time'
@@ -24,8 +24,9 @@ const SLUG_PREFIX: Record<InvitationKind, string> = {
   ultah_syukur: 'syukur',
 }
 
-function suggestSlug(kind: InvitationKind, groom: string, bride: string, age: string): string {
+function suggestSlug(kind: InvitationKind, groom: string, bride: string, age: string, joint: boolean): string {
   if (isWedding(kind)) return slugify(`${groom} ${bride}`)
+  if (joint) return slugify(`${SLUG_PREFIX[kind]} ${groom} ${bride}`)
   return slugify(`${SLUG_PREFIX[kind]} ${groom} ${kind === 'sweet_seventeen' ? '' : age}`)
 }
 
@@ -70,13 +71,14 @@ export function InvitationForm({
   const [slugTouched, setSlugTouched] = useState(Boolean(invitation))
   const [nick, setNick] = useState({ groom: invitation?.groom_nickname ?? '', bride: invitation?.bride_nickname ?? '' })
   const [age, setAge] = useState(invitation?.age ? String(invitation.age) : '')
+  const [joint, setJoint] = useState(Boolean(invitation && !isWedding(invitation.kind) && invitation.bride_nickname))
   const e = state.fieldErrors ?? {}
   const wedding = isWedding(kind)
   const k = KINDS[kind]
 
-  function suggest(next: { kind?: InvitationKind; groom?: string; bride?: string; age?: string }) {
+  function suggest(next: { kind?: InvitationKind; groom?: string; bride?: string; age?: string; joint?: boolean }) {
     if (slugTouched) return
-    setSlug(suggestSlug(next.kind ?? kind, next.groom ?? nick.groom, next.bride ?? nick.bride, next.age ?? age))
+    setSlug(suggestSlug(next.kind ?? kind, next.groom ?? nick.groom, next.bride ?? nick.bride, next.age ?? age, next.joint ?? joint))
   }
 
   function onNick(which: 'groom' | 'bride', value: string) {
@@ -99,7 +101,9 @@ export function InvitationForm({
   }
 
   const slugChangedWhilePublished = invitation?.status === 'published' && slug !== invitation.slug
-  const losesBride = invitation !== undefined && isWedding(invitation.kind) && !wedding
+  const hadSecond = invitation !== undefined && Boolean(invitation.bride_nickname)
+  const hasSecond = wedding || joint
+  const losesBride = hadSecond && !hasSecond
 
   // Kirim tanpa reset formulir bawaan React, agar isian tetap ada bila ada error.
   function onSubmit(ev: FormEvent<HTMLFormElement>) {
@@ -110,7 +114,7 @@ export function InvitationForm({
     ) {
       return
     }
-    if (losesBride && !confirm('Jenis undangan diubah dari pernikahan. Data mempelai wanita akan dihapus. Lanjutkan?')) return
+    if (losesBride && !confirm('Data orang kedua (mempelai wanita / yang dirayakan bersama) akan dihapus. Lanjutkan?')) return
     const fd = new FormData(ev.currentTarget)
     fd.set('events', eventsPayload(events))
     startTransition(() => action(fd))
@@ -144,7 +148,7 @@ export function InvitationForm({
         </fieldset>
         {losesBride && (
           <div className="mt-3">
-            <Notice kind="error">Undangan ini sebelumnya pernikahan. Saat disimpan, data mempelai wanita akan dihapus.</Notice>
+            <Notice kind="error">Saat disimpan, data orang kedua (mempelai wanita / yang dirayakan bersama) akan dihapus.</Notice>
           </div>
         )}
       </Card>
@@ -197,11 +201,7 @@ export function InvitationForm({
             </div>
           ) : (
             <div key="usia" className="space-y-3">
-              <Field
-                label={kind === 'ultah_syukur' ? 'Usia yang disyukuri (tahun)' : 'Ulang tahun ke-'}
-                error={e.age}
-                hint="Tampil di sampul, mis. “Ulang Tahun ke-5”. Boleh dikosongkan."
-              >
+              <Field label={kind === 'ultah_syukur' ? 'Usia yang disyukuri (tahun)' : 'Ulang tahun ke-'} error={e.age}>
                 <input
                   name="age"
                   type="number"
@@ -214,9 +214,74 @@ export function InvitationForm({
                   placeholder={k.placeholder.age}
                 />
               </Field>
+              <Field label="Tanggal lahir (opsional)" error={e.birth_date} hint="Tampil di bawah usia, mis. Lahir 12 Maret 2022.">
+                <input name="birth_date" type="date" defaultValue={invitation?.birth_date ?? ''} className={inputClass} />
+              </Field>
             </div>
           )}
         </div>
+        {!wedding && (
+          <div className="mt-5 border-t border-stone-200 pt-4">
+            <label className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                name="joint"
+                checked={joint}
+                onChange={(x) => {
+                  setJoint(x.target.checked)
+                  suggest({ joint: x.target.checked })
+                }}
+              />
+              <span className="font-medium">{JOINT_LABEL[kind as Exclude<InvitationKind, 'pernikahan'>].toggle}</span>
+            </label>
+            <p className="mt-1 text-sm text-stone-500">Masing-masing tampil dengan foto, nama, usia, dan tanggal lahir sendiri, walau tanggal lahirnya berbeda.</p>
+            {joint && (
+              <div key="orang-kedua" className="mt-4 grid gap-4 sm:grid-cols-2">
+                <div className="space-y-3">
+                  <p className="text-sm font-semibold text-stone-800">{JOINT_LABEL[kind as Exclude<InvitationKind, 'pernikahan'>].second}</p>
+                  <Field label="Nama lengkap" error={e.bride_name}>
+                    <input
+                      name="bride_name"
+                      defaultValue={invitation?.bride_name ?? ''}
+                      className={inputClass}
+                      placeholder={kind === 'ultah_syukur' ? 'Ibu Sri Rahayu' : 'Bima Putra Santoso'}
+                    />
+                  </Field>
+                  <Field label="Nama panggilan" error={e.bride_nickname}>
+                    <input
+                      name="bride_nickname"
+                      value={nick.bride}
+                      onChange={(x) => onNick('bride', x.target.value)}
+                      className={inputClass}
+                      placeholder={kind === 'ultah_syukur' ? 'Oma Sri' : 'Bima'}
+                    />
+                  </Field>
+                  <Field label={PARENTS_LABEL[kind]} error={e.bride_parents}>
+                    <input name="bride_parents" defaultValue={invitation?.bride_parents ?? ''} className={inputClass} placeholder="Boleh dikosongkan" />
+                  </Field>
+                </div>
+                <div className="space-y-3">
+                  <p className="hidden text-sm font-semibold sm:block">&nbsp;</p>
+              <Field label={kind === 'ultah_syukur' ? 'Usia yang disyukuri (tahun)' : 'Ulang tahun ke-'} error={e.age2}>
+                <input
+                  name="age2"
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  max={150}
+                  defaultValue={invitation?.age2 ?? ''}
+                  className={inputClass}
+                  placeholder={kind === 'ultah_syukur' ? '65' : '3'}
+                />
+              </Field>
+                  <Field label="Tanggal lahir (opsional)" error={e.birth_date2}>
+                    <input name="birth_date2" type="date" defaultValue={invitation?.birth_date2 ?? ''} className={inputClass} />
+                  </Field>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </Card>
 
       <Card title="Alamat Undangan">

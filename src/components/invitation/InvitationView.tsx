@@ -1,5 +1,5 @@
 import { customThemeAttrs, customThemeStyle } from '@/lib/custom-theme'
-import { ageLabel, displayName, eventTitle, KINDS } from '@/lib/kinds'
+import { ageLabel, displayName, eventTitle, isJoint, KINDS } from '@/lib/kinds'
 import { effectiveTexts } from '@/lib/text-templates'
 import { earliestEvent, eventInstant, formatTanggal } from '@/lib/time'
 import type { InvitationFull, Wish } from '@/lib/types'
@@ -59,7 +59,7 @@ export function InvitationView({ invitation: inv, guestName, guestCode, wishes, 
         label={kind.coverLabel}
         motif={kind.motif}
         celebrate={kind.celebrate}
-        subtitle={ageLabel(inv.kind, inv.age)}
+        subtitle={isJoint(inv) ? (inv.age && inv.age2 ? ageLabel(inv.kind, inv.age, inv.age2) : null) : ageLabel(inv.kind, inv.age)}
         dateLabel={first ? formatTanggal(first.date) : null}
         coverUrl={inv.cover_photo_url ?? ct?.assets.cover_bg ?? null}
         musicUrl={inv.music_url}

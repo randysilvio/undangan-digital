@@ -19,6 +19,11 @@ export interface Invitation {
   kind: InvitationKind
   /** Usia yang dirayakan (ulang tahun); null untuk pernikahan. */
   age: number | null
+  /** Ulang tahun bersama: usia orang kedua (data orang kedua di kolom bride_*). */
+  age2: number | null
+  /** Tanggal lahir (YYYY-MM-DD), opsional, hanya ulang tahun. */
+  birth_date: string | null
+  birth_date2: string | null
   theme: ThemeName
   timezone: TimeZoneId
   groom_name: string

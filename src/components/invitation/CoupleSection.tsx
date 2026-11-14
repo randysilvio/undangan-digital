@@ -1,9 +1,18 @@
 import type { CSSProperties } from 'react'
-import { ageLabel, isWedding, KINDS } from '@/lib/kinds'
-import type { Invitation } from '@/lib/types'
+import { isJoint, isWedding, KINDS, singleAgeLabel } from '@/lib/kinds'
+import { formatTanggalLahir } from '@/lib/time'
+import type { Invitation, InvitationKind } from '@/lib/types'
 import { Section } from './Section'
 
-function Person(props: { photo: string | null; name: string; nickname: string; parents: string | null; from?: 'left' | 'right' | 'zoom' }) {
+interface PersonProps {
+  photo: string | null
+  name: string
+  nickname: string
+  parents: string | null
+  from?: 'left' | 'right' | 'zoom'
+}
+
+function Person(props: PersonProps) {
   return (
     <div data-reveal={props.from ?? 'zoom'} className="text-center">
       <div className="relative mx-auto size-48">
@@ -34,22 +43,58 @@ function Person(props: { photo: string | null; name: string; nickname: string; p
   )
 }
 
-/** Tokoh utama: dua mempelai (pernikahan) atau satu orang yang berulang tahun. */
+/**
+ * Lencana usia + tanggal lahir. Varian "solid" (warna aksen) untuk orang pertama dan "ring" (garis aksen)
+ * untuk orang kedua, agar dua usia mudah dibedakan.
+ */
+function AgeBadge({ kind, age, birthDate, variant = 'solid', delay = 250 }: { kind: InvitationKind; age: number | null; birthDate: string | null; variant?: 'solid' | 'ring'; delay?: number }) {
+  if (!age && !birthDate) return null
+  const label = singleAgeLabel(kind, age)
+  return (
+    <div data-reveal="zoom" style={{ '--d': `${delay}ms` } as CSSProperties} className="mt-6 flex flex-col items-center">
+      {age && (
+        <div
+          className={`relative flex size-24 items-center justify-center rounded-full shadow-lg ${
+            variant === 'solid' ? 'bg-inv-accent text-inv-on-accent' : 'border-2 border-inv-accent bg-inv-surface text-inv-accent'
+          }`}
+        >
+          <span aria-hidden className="absolute inset-1.5 rounded-full border border-current opacity-40" />
+          <span className="font-heading text-4xl leading-none tabular-nums">{age}</span>
+        </div>
+      )}
+      {label && <p className="mt-3 font-heading text-lg text-inv-text">{label}</p>}
+      {birthDate && <p className="mt-0.5 text-sm text-inv-muted">Lahir {formatTanggalLahir(birthDate)}</p>}
+    </div>
+  )
+}
+
+/** Tokoh utama: dua mempelai, satu orang yang berulang tahun, atau dua orang yang dirayakan bersama. */
 export function CoupleSection({ invitation: i, intro }: { invitation: Invitation; intro: string }) {
   if (!isWedding(i.kind)) {
-    const age = ageLabel(i.kind, i.age)
-    return (
-      <Section id="mempelai" title={KINDS[i.kind].personTitle} subtitle={intro}>
-        <Person photo={i.groom_photo_url} name={i.groom_name} nickname={i.groom_nickname} parents={i.groom_parents} />
-        {i.age && (
-          <div data-reveal="zoom" style={{ '--d': '250ms' } as CSSProperties} className="mt-8 flex flex-col items-center">
-            <div className="relative flex size-28 items-center justify-center rounded-full bg-inv-accent text-inv-on-accent shadow-lg">
-              <span aria-hidden className="absolute inset-1.5 rounded-full border border-current opacity-40" />
-              <span className="font-heading text-5xl leading-none tabular-nums">{i.age}</span>
+    const title = KINDS[i.kind].personTitle
+    if (isJoint(i)) {
+      return (
+        <Section id="mempelai" title={title} subtitle={intro}>
+          <div className="space-y-10">
+            <div>
+              <Person photo={i.groom_photo_url} name={i.groom_name} nickname={i.groom_nickname} parents={i.groom_parents} from="left" />
+              <AgeBadge kind={i.kind} age={i.age} birthDate={i.birth_date} />
             </div>
-            {age && <p className="mt-3 font-heading text-lg text-inv-text">{age}</p>}
+            <p data-reveal="zoom" aria-hidden className="text-center font-names text-5xl text-inv-accent">
+              &amp;
+            </p>
+            <div>
+              <Person photo={i.bride_photo_url} name={i.bride_name ?? ''} nickname={i.bride_nickname ?? ''} parents={i.bride_parents} from="right" />
+              <AgeBadge kind={i.kind} age={i.age2} birthDate={i.birth_date2} variant="ring" />
+            </div>
           </div>
-        )}
+        </Section>
+      )
+    }
+    return (
+      <Section id="mempelai" title={title} subtitle={intro}>
+        <Person photo={i.groom_photo_url} name={i.groom_name} nickname={i.groom_nickname} parents={i.groom_parents} />
+        <AgeBadge kind={i.kind} age={i.age} birthDate={i.birth_date} />
       </Section>
     )
   }

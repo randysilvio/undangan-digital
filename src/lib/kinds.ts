@@ -122,20 +122,40 @@ export const KIND_IDS = Object.keys(KINDS) as InvitationKind[]
 
 export const isWedding = (kind: InvitationKind) => kind === 'pernikahan'
 
-/** Nama yang tampil besar: "Budi & Ani" untuk pernikahan, nama panggilan untuk ulang tahun. */
+/** Ulang tahun yang dirayakan dua orang sekaligus (orang kedua di kolom bride_*). */
+export const isJoint = (inv: { kind: InvitationKind; bride_nickname: string | null }) => !isWedding(inv.kind) && Boolean(inv.bride_nickname)
+
+/** Nama yang tampil besar: "Budi & Ani" (pernikahan / ulang tahun bersama) atau satu nama panggilan. */
 export function displayName(inv: { kind: InvitationKind; groom_nickname: string; bride_nickname: string | null }): string {
-  return isWedding(inv.kind) && inv.bride_nickname ? `${inv.groom_nickname} & ${inv.bride_nickname}` : inv.groom_nickname
+  return inv.bride_nickname ? `${inv.groom_nickname} & ${inv.bride_nickname}` : inv.groom_nickname
 }
 
-/** "Ulang Tahun ke-5", atau null bila bukan ulang tahun / usia kosong. */
-export function ageLabel(kind: InvitationKind, age: number | null): string | null {
+/** Label usia satu orang: "Ulang Tahun ke-5" atau "Syukuran 70 Tahun". */
+export function singleAgeLabel(kind: InvitationKind, age: number | null): string | null {
   if (isWedding(kind) || !age) return null
   return kind === 'ultah_syukur' ? `Syukuran ${age} Tahun` : `Ulang Tahun ke-${age}`
 }
 
-/** Judul halaman dan judul kalender, mis. "Pernikahan Budi & Ani" atau "Ulang Tahun ke-5 Kayla". */
+/** "Ulang Tahun ke-5", "Ulang Tahun ke-5 & ke-3", "Syukuran 70 & 65 Tahun"; null bila tidak ada usia. */
+export function ageLabel(kind: InvitationKind, age: number | null, age2: number | null = null): string | null {
+  if (isWedding(kind)) return null
+  if (age && age2) return kind === 'ultah_syukur' ? `Syukuran ${age} & ${age2} Tahun` : `Ulang Tahun ke-${age} & ke-${age2}`
+  return singleAgeLabel(kind, age ?? age2)
+}
+
+/** Judul halaman dan judul kalender, mis. "Pernikahan Budi & Ani", "Ulang Tahun ke-5 Kayla", "Ulang Tahun Kayla & Bima". */
 export function eventTitle(inv: { kind: InvitationKind; age: number | null; groom_nickname: string; bride_nickname: string | null }): string {
   const name = displayName(inv)
   if (isWedding(inv.kind)) return `Pernikahan ${name}`
-  return `${ageLabel(inv.kind, inv.age) ?? (inv.kind === 'ultah_syukur' ? 'Syukuran' : 'Ulang Tahun')} ${name}`
+  const word = inv.kind === 'ultah_syukur' ? 'Syukuran' : 'Ulang Tahun'
+  if (isJoint(inv)) return `${word} ${name}`
+  return `${ageLabel(inv.kind, inv.age) ?? word} ${name}`
+}
+
+/** Label pilihan "dirayakan bersama" per jenis. */
+export const JOINT_LABEL: Record<Exclude<InvitationKind, 'pernikahan'>, { toggle: string; second: string }> = {
+  ultah_anak: { toggle: 'Dirayakan bersama (2 anak, mis. kakak-adik)', second: 'Anak kedua' },
+  sweet_seventeen: { toggle: 'Dirayakan bersama (mis. kembar)', second: 'Orang kedua' },
+  ultah_dewasa: { toggle: 'Dirayakan bersama (2 orang)', second: 'Orang kedua' },
+  ultah_syukur: { toggle: 'Disyukuri bersama (mis. Opa & Oma)', second: 'Orang kedua' },
 }

@@ -62,6 +62,21 @@ export const wishSchema = z.object({
   message: required(500, 'Ucapan'),
 })
 
+const optionalAge = z.preprocess(
+  (v) => (typeof v === 'string' ? v.trim() : v) || null,
+  z.coerce.number({ error: 'Usia harus angka' }).int('Usia harus angka').min(1, 'Usia minimal 1').max(150, 'Usia maksimal 150').nullable(),
+)
+
+/** Tanggal lahir opsional (YYYY-MM-DD), tidak boleh di masa depan. */
+const optionalDate = z.preprocess(
+  (v) => (typeof v === 'string' ? v.trim() : v) || null,
+  z
+    .string()
+    .refine((s) => isRealDate(s) && s >= '1870-01-01', 'Tanggal tidak valid')
+    .refine((s) => s <= new Date().toISOString().slice(0, 10), 'Tanggal lahir tidak boleh di masa depan')
+    .nullable(),
+)
+
 /** Kolom formulir undangan (sebelum aturan per jenis undangan). */
 export const invitationFields = z.object({
   slug: z
@@ -75,10 +90,12 @@ export const invitationFields = z.object({
       }
     }),
   kind: z.preprocess((v) => v || 'pernikahan', z.enum(KIND_IDS, { error: 'Pilih jenis undangan' })),
-  age: z.preprocess(
-    (v) => (typeof v === 'string' ? v.trim() : v) || null,
-    z.coerce.number({ error: 'Usia harus angka' }).int('Usia harus angka').min(1, 'Usia minimal 1').max(150, 'Usia maksimal 150').nullable(),
-  ),
+  age: optionalAge,
+  age2: optionalAge,
+  /** "on" bila ulang tahun dirayakan dua orang. */
+  joint: z.preprocess((v) => v === 'on' || v === true, z.boolean()),
+  birth_date: optionalDate,
+  birth_date2: optionalDate,
   theme: z.enum(THEME_NAMES, { error: 'Pilih tema' }),
   timezone: z.enum(['Asia/Jakarta', 'Asia/Makassar', 'Asia/Jayapura'], { error: 'Pilih zona waktu' }),
   groom_name: required(100),
@@ -100,21 +117,28 @@ export const invitationFields = z.object({
   ),
 })
 
-/** Pernikahan wajib punya dua mempelai; ulang tahun hanya satu orang (kolom bride_* dikosongkan). */
+/**
+ * Pernikahan wajib punya dua mempelai. Ulang tahun satu orang, atau dua orang bila "dirayakan bersama"
+ * (orang kedua di kolom bride_*). Kolom yang tidak berlaku dikosongkan.
+ */
 export const invitationSchema = invitationFields
   .superRefine((d, ctx) => {
-    if (d.kind !== 'pernikahan') return
+    if (d.kind !== 'pernikahan' && !d.joint) return
     if (!d.bride_name) ctx.addIssue({ code: 'custom', path: ['bride_name'], message: 'Wajib diisi' })
     if (!d.bride_nickname) ctx.addIssue({ code: 'custom', path: ['bride_nickname'], message: 'Wajib diisi' })
   })
-  .transform((d) => {
+  .transform(({ joint, ...d }) => {
     const wedding = d.kind === 'pernikahan'
+    const second = wedding || joint
     return {
       ...d,
       age: wedding ? null : d.age,
-      bride_name: wedding ? d.bride_name : null,
-      bride_nickname: wedding ? d.bride_nickname : null,
-      bride_parents: wedding ? d.bride_parents : null,
+      age2: !wedding && joint ? d.age2 : null,
+      birth_date: wedding ? null : d.birth_date,
+      birth_date2: !wedding && joint ? d.birth_date2 : null,
+      bride_name: second ? d.bride_name : null,
+      bride_nickname: second ? d.bride_nickname : null,
+      bride_parents: second ? d.bride_parents : null,
     }
   })
 

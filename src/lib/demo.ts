@@ -6,7 +6,10 @@ import type { InvitationEvent, InvitationFull, InvitationKind, StoryItem, ThemeN
 export const kindSlug = (k: InvitationKind) => k.replace(/_/g, '-')
 export const kindFromSlug = (s: string): InvitationKind | null => KIND_IDS.find((k) => kindSlug(k) === s) ?? null
 
-type Person = Pick<InvitationFull, 'groom_name' | 'groom_nickname' | 'groom_parents' | 'bride_name' | 'bride_nickname' | 'bride_parents' | 'age'>
+type Person = Pick<
+  InvitationFull,
+  'groom_name' | 'groom_nickname' | 'groom_parents' | 'bride_name' | 'bride_nickname' | 'bride_parents' | 'age' | 'age2' | 'birth_date' | 'birth_date2'
+>
 
 const PEOPLE: Record<InvitationKind, Person> = {
   pernikahan: {
@@ -17,15 +20,40 @@ const PEOPLE: Record<InvitationKind, Person> = {
     bride_nickname: 'Ani',
     bride_parents: 'Putri dari Bapak Joko & Ibu Rini',
     age: null,
+    age2: null,
+    birth_date: null,
+    birth_date2: null,
   },
-  ultah_anak: { ...solo('Kayla Putri Santoso', 'Kayla', 'Putri dari Bapak Budi & Ibu Ani'), age: 5 },
-  sweet_seventeen: { ...solo('Nadia Aurelia', 'Nadia', 'Putri dari Bapak Hendra & Ibu Maria'), age: 17 },
-  ultah_dewasa: { ...solo('Andreas Wijaya', 'Andreas', null), age: 30 },
-  ultah_syukur: { ...solo('Bapak Slamet Riyadi', 'Opa Slamet', 'Bersama anak, menantu, dan cucu'), age: 70 },
+  ultah_anak: { ...solo('Kayla Putri Santoso', 'Kayla', 'Putri dari Bapak Budi & Ibu Ani'), age: 5, birth_date: '2022-03-12' },
+  sweet_seventeen: { ...solo('Nadia Aurelia', 'Nadia', 'Putri dari Bapak Hendra & Ibu Maria'), age: 17, birth_date: '2010-08-02' },
+  ultah_dewasa: { ...solo('Andreas Wijaya', 'Andreas', null), age: 30, birth_date: '1997-07-21' },
+  // Contoh "disyukuri bersama": dua orang, usia dan tanggal lahir berbeda, dirayakan di satu acara.
+  ultah_syukur: {
+    groom_name: 'Bapak Slamet Riyadi',
+    groom_nickname: 'Opa Slamet',
+    groom_parents: null,
+    bride_name: 'Ibu Sri Rahayu',
+    bride_nickname: 'Oma Sri',
+    bride_parents: null,
+    age: 70,
+    age2: 65,
+    birth_date: '1957-04-17',
+    birth_date2: '1962-09-30',
+  },
 }
 
 function solo(name: string, nickname: string, parents: string | null) {
-  return { groom_name: name, groom_nickname: nickname, groom_parents: parents, bride_name: null, bride_nickname: null, bride_parents: null }
+  return {
+    groom_name: name,
+    groom_nickname: nickname,
+    groom_parents: parents,
+    bride_name: null,
+    bride_nickname: null,
+    bride_parents: null,
+    age2: null,
+    birth_date: null,
+    birth_date2: null,
+  }
 }
 
 const VENUES: Record<InvitationKind, { venue: string; address: string; times: [string, string | null][] }> = {
@@ -67,9 +95,9 @@ const EXTRAS: Record<InvitationKind, { story: StoryItem[]; family: string | null
   ultah_syukur: {
     story: [
       { year: '1957', title: 'Lahir di Klaten', text: 'Anak ketiga dari tujuh bersaudara.' },
-      { year: '1983', title: 'Menikah dengan Oma Sri', text: 'Membangun keluarga dengan penuh kasih.' },
+      { year: '1983', title: 'Opa & Oma menikah', text: 'Membangun keluarga dengan penuh kasih.' },
       { year: '2015', title: 'Purnabakti', text: '32 tahun mengabdi sebagai guru.' },
-      { year: '2027', title: '70 tahun penuh syukur', text: 'Dikelilingi 3 anak, 3 menantu, dan 7 cucu.' },
+      { year: '2027', title: '70 & 65 tahun penuh syukur', text: 'Dikelilingi 3 anak, 3 menantu, dan 7 cucu.' },
     ],
     family: 'Ir. Budi Riyadi & Ani\ndr. Sari Riyadi & Hendra\nDewi Riyadi, S.E. & Agus\nCucu: Kayla, Bima, Naura, Raka, Dinda, Tio, Ayu',
     dress_code: 'Batik',

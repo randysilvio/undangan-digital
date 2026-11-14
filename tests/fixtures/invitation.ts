@@ -28,6 +28,9 @@ export function makeInvitation(overrides: Partial<InvitationFull> = {}): Invitat
     family: null,
     dress_code: null,
     custom_theme_id: null,
+    age2: null,
+    birth_date: null,
+    birth_date2: null,
     created_at: '2026-11-01T00:00:00Z',
     events: [
       {

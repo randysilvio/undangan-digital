@@ -64,3 +64,11 @@ export function formatTimestamp(iso: string, tz: TimeZoneId): string {
   const p = (n: number) => String(n).padStart(2, '0')
   return `${p(t.getUTCDate())}/${p(t.getUTCMonth() + 1)}/${t.getUTCFullYear()} ${p(t.getUTCHours())}.${p(t.getUTCMinutes())}`
 }
+
+const tanggalLahirFormat = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+
+/** Tanggal lahir tanpa nama hari, mis. "12 Maret 2022". */
+export function formatTanggalLahir(date: string): string {
+  const [y, m, d] = date.split('-').map(Number)
+  return tanggalLahirFormat.format(new Date(Date.UTC(y, m - 1, d)))
+}
