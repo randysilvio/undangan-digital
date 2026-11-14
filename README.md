@@ -26,5 +26,3 @@ npm test           # tes unit
 npm run test:db    # tes keamanan database (perlu .env.local)
 npm run e2e        # tes menyeluruh di browser (perlu .env.local)
 ```
-
-Rancangan: [docs/rancangan/2026-11-10-undangan-digital.md](docs/rancangan/2026-11-10-undangan-digital.md)
