@@ -140,12 +140,32 @@ Setiap kali kode baru di-push ke GitHub, Vercel otomatis memperbarui web.
 
 ---
 
-## 5. Nanti: pakai domain sendiri
+## 5. Tema Saya dan Pengaturan Situs
 
-1. Beli domain, misalnya `namabisnis.id`, di registrar mana pun.
+**Tema Saya** (menu atas panel admin) membuat tema dengan warna, huruf, dan gambar hiasan sendiri:
+
+1. **Tema Saya → + Buat Tema**: isi nama, pilih tema dasar, atur warna dan huruf, lalu **Buat Tema**.
+2. Di halaman tema, unggah gambar ke slot yang diinginkan (latar sampul, bingkai, hiasan sudut, tekstur,
+   hiasan atas judul, ornamen, partikel, latar penutup). Desain di Canva/Photoshop **tanpa teks**, simpan
+   sebagai PNG transparan. Slot yang kosong memakai tampilan tema dasar. Pratinjau HP di kanan langsung
+   diperbarui.
+3. Centang **Tampilkan di galeri publik** agar tema muncul di halaman depan dan halaman contoh.
+4. Pilih tema di formulir undangan, bagian **Tema kustom**.
+
+Mengubah tema langsung mengubah semua undangan yang memakainya. Untuk mencoba variasi, pakai
+**Duplikat Tema**. Tema yang masih dipakai undangan tidak bisa dihapus.
+
+**Pengaturan** mengisi nomor WhatsApp, Instagram, email, dan paket harga di halaman depan. Kolom yang
+kosong tidak ditampilkan. Pilihan "Undangan digital oleh Valynz.id" menambahkan tulisan kecil di akhir
+setiap undangan (bawaan: mati).
+
+## 6. Domain sendiri (valynz.id)
+
+1. Beli domain, misalnya `valynz.id`, di registrar mana pun.
 2. Di Vercel, buka **Project → Settings → Domains** → **Add** → masukkan domain. Ikuti petunjuk
    pengaturan DNS yang ditampilkan.
-3. Ubah `NEXT_PUBLIC_SITE_URL` menjadi `https://namabisnis.id`, lalu **Redeploy**.
+3. Jadikan domain itu domain utama (production). Link tamu, sitemap, dan gambar pratinjau otomatis
+   memakainya setelah **Redeploy**. Bila perlu, isi `NEXT_PUBLIC_SITE_URL` dengan `https://valynz.id`.
 
 Link lama berakhiran `.vercel.app` tetap bisa dibuka.
 

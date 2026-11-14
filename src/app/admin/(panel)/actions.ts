@@ -6,6 +6,7 @@ import { parseInvitationForm } from '@/lib/admin-forms'
 import { requireAdmin } from '@/lib/auth'
 import { duplicateInvitation, getInvitation, replaceEvents, saveInvitation, setStatus } from '@/lib/data/admin'
 import { mapDbError, SAVE_FAILED } from '@/lib/data/errors'
+import { getTheme } from '@/lib/data/themes'
 import { canPublish } from '@/lib/publish'
 import type { FormState } from '@/lib/validation'
 
@@ -18,6 +19,12 @@ export async function saveInvitationAction(_prev: FormState, fd: FormData): Prom
   const parsed = parseInvitationForm(fd)
   if (parsed.fieldErrors) return { status: 'error', message: CHECK_FIELDS, fieldErrors: parsed.fieldErrors }
   const { invitation, events } = parsed.data
+
+  if (invitation.custom_theme_id) {
+    const theme = await getTheme(supabase, invitation.custom_theme_id)
+    if (!theme) return { status: 'error', message: CHECK_FIELDS, fieldErrors: { theme: 'Tema kustom tidak ditemukan' } }
+    invitation.theme = theme.base_theme
+  }
 
   if (id && events.length === 0) {
     const current = await getInvitation(supabase, id)

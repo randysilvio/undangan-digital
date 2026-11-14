@@ -18,6 +18,7 @@ type Parsed<T> = { data: T; fieldErrors?: undefined } | { data?: undefined; fiel
 const MAX_EVENTS = 10
 const MAX_GIFTS = 10
 const MAX_STORY = 12
+const CUSTOM_THEME = /^custom:([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/
 
 function readJsonArray(fd: FormData, key: string): unknown[] | null {
   try {
@@ -40,9 +41,13 @@ function parseList<S extends z.ZodType>(items: unknown[], schema: S, prefix: str
   return { data, errors }
 }
 
-export function parseInvitationForm(fd: FormData): Parsed<{ invitation: InvitationInput & { story: StoryInput[] }; events: EventInput[] }> {
+export function parseInvitationForm(fd: FormData): Parsed<{ invitation: InvitationInput & { story: StoryInput[]; custom_theme_id: string | null }; events: EventInput[] }> {
   const errors: Record<string, string> = {}
-  const inv = invitationSchema.safeParse(Object.fromEntries(Object.keys(invitationFields.shape).map((k) => [k, String(fd.get(k) ?? '')])))
+  const values = Object.fromEntries(Object.keys(invitationFields.shape).map((k) => [k, String(fd.get(k) ?? '')]))
+  // Tema kustom dikirim sebagai "custom:<uuid>"; tema dasarnya ditentukan server dari data tema.
+  const custom = CUSTOM_THEME.exec(values.theme)
+  if (custom) values.theme = 'elegan'
+  const inv = invitationSchema.safeParse(values)
   if (!inv.success) Object.assign(errors, fieldErrors(inv.error))
 
   const raw = readJsonArray(fd, 'events')
@@ -66,7 +71,7 @@ export function parseInvitationForm(fd: FormData): Parsed<{ invitation: Invitati
   }
 
   if (Object.keys(errors).length || !inv.success) return { fieldErrors: errors }
-  return { data: { invitation: { ...inv.data, story }, events } }
+  return { data: { invitation: { ...inv.data, story, custom_theme_id: custom?.[1] ?? null }, events } }
 }
 
 const MAX_GUEST_PASTE = 500

@@ -489,3 +489,89 @@ body {
     animation: none;
   }
 }
+
+/* ───────────── Tema kustom (gambar unggahan admin) ───────────── */
+.inv-cover-frame,
+.inv-corner {
+  display: none;
+  pointer-events: none;
+  position: absolute;
+}
+
+[data-has-frame] .inv-cover-frame {
+  display: block;
+  inset: 0;
+  z-index: 0;
+  background: var(--inv-cover-frame) center / 100% 100% no-repeat;
+}
+
+[data-has-frame] .inv-default-frame {
+  display: none;
+}
+
+[data-has-corner] .inv-corner {
+  display: block;
+  z-index: 1;
+  width: clamp(72px, 24vw, 140px);
+  aspect-ratio: 1;
+  background: var(--inv-corner) top left / contain no-repeat;
+}
+
+.inv-corner-tl {
+  top: 0;
+  left: 0;
+}
+
+.inv-corner-tr {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+.inv-corner-bl {
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+
+.inv-corner-br {
+  right: 0;
+  bottom: 0;
+  transform: scale(-1, -1);
+}
+
+[data-has-texture] section[data-section]:not([data-section="sampul"]) {
+  background-image: var(--inv-texture);
+  background-size: 360px;
+  background-repeat: repeat;
+}
+
+[data-has-garland] section[data-section] header[data-reveal]::before {
+  content: "";
+  display: block;
+  height: 56px;
+  margin: 0 auto 0.75rem;
+  background: var(--inv-garland) center / contain no-repeat;
+}
+
+[data-has-ornament] .inv-ornament {
+  width: 180px;
+  height: 36px;
+  -webkit-mask: none;
+  mask: none;
+  background: var(--inv-ornament-img) center / contain no-repeat;
+}
+
+[data-has-closing] section[data-section="penutup"] {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--inv-bg) 72%, transparent), color-mix(in srgb, var(--inv-bg) 72%, transparent)),
+    var(--inv-closing-bg);
+  background-size: cover;
+  background-position: center;
+}
+
+.inv-ambient > i > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

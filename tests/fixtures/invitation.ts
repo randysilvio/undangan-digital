@@ -27,6 +27,7 @@ export function makeInvitation(overrides: Partial<InvitationFull> = {}): Invitat
     story: [],
     family: null,
     dress_code: null,
+    custom_theme_id: null,
     created_at: '2026-11-01T00:00:00Z',
     events: [
       {

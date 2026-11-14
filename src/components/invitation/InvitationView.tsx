@@ -1,3 +1,4 @@
+import { customThemeAttrs, customThemeStyle } from '@/lib/custom-theme'
 import { ageLabel, displayName, eventTitle, KINDS } from '@/lib/kinds'
 import { effectiveTexts } from '@/lib/text-templates'
 import { earliestEvent, eventInstant, formatTanggal } from '@/lib/time'
@@ -25,9 +26,12 @@ export interface InvitationViewProps {
   preview?: boolean
   /** Contoh di halaman depan: formulir nonaktif, sampul tetap tampil. */
   demo?: boolean
+  /** Kredit kecil pembuat undangan di bagian penutup. */
+  credit?: { label: string; href: string } | null
 }
 
-export function InvitationView({ invitation: inv, guestName, guestCode, wishes, preview, demo }: InvitationViewProps) {
+export function InvitationView({ invitation: inv, guestName, guestCode, wishes, preview, demo, credit }: InvitationViewProps) {
+  const ct = inv.custom_theme ?? null
   const kind = KINDS[inv.kind]
   const coupleName = displayName(inv)
   const disabled = preview || demo
@@ -35,9 +39,14 @@ export function InvitationView({ invitation: inv, guestName, guestCode, wishes, 
   const first = earliestEvent(inv.events, inv.timezone)
 
   return (
-    <main data-theme={inv.theme} data-reveal-root className="min-h-dvh overflow-x-clip bg-inv-bg font-body text-inv-text [overflow-wrap:anywhere]">
+    <main
+      data-theme={inv.theme}
+      data-reveal-root
+      {...customThemeAttrs(ct)}
+      style={customThemeStyle(ct)}
+      className="min-h-dvh overflow-x-clip bg-inv-bg font-body text-inv-text [overflow-wrap:anywhere]">
       <RevealObserver />
-      <Ambient theme={inv.theme} />
+      <Ambient theme={inv.theme} custom={ct ? { mode: ct.particles, image: ct.assets.particle } : undefined} />
       {(preview || demo) && (
         <p className="sticky top-0 z-50 bg-[#2a211c] px-4 py-2 text-center font-sans text-sm font-medium text-[#f6efe4]">
           {demo ? 'Contoh tampilan, semua data fiktif' : `Mode pratinjau${inv.status === 'draft' ? ': undangan belum terbit' : ''}`}
@@ -52,7 +61,7 @@ export function InvitationView({ invitation: inv, guestName, guestCode, wishes, 
         celebrate={kind.celebrate}
         subtitle={ageLabel(inv.kind, inv.age)}
         dateLabel={first ? formatTanggal(first.date) : null}
-        coverUrl={inv.cover_photo_url}
+        coverUrl={inv.cover_photo_url ?? ct?.assets.cover_bg ?? null}
         musicUrl={inv.music_url}
         preview={preview}
       >
@@ -79,7 +88,7 @@ export function InvitationView({ invitation: inv, guestName, guestCode, wishes, 
           <WishesForm invitationId={inv.id} slug={inv.slug} guestName={guestName} wishes={wishes} disabled={disabled} />
         </Section>
 
-        <ClosingSection coupleName={coupleName} text={texts.closing} signOff={kind.signOff} motif={kind.motif} />
+        <ClosingSection coupleName={coupleName} text={texts.closing} signOff={kind.signOff} motif={kind.motif} credit={credit} />
       </CoverGate>
     </main>
   )

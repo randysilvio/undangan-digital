@@ -115,6 +115,7 @@ export function demoInvitation(kind: InvitationKind, theme: ThemeName): Invitati
     wa_message: t.wa,
     music_url: null,
     ...EXTRAS[kind],
+    custom_theme_id: null,
     created_at: '2027-01-01T00:00:00Z',
     events: demoEvents(kind, id),
     gallery: [],

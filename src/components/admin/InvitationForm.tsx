@@ -6,7 +6,8 @@ import { isWedding, KIND_IDS, KINDS } from '@/lib/kinds'
 import { slugify } from '@/lib/slug'
 import { effectiveTexts } from '@/lib/text-templates'
 import { TIMEZONES } from '@/lib/time'
-import type { InvitationFull, InvitationKind, ThemeName } from '@/lib/types'
+import { themeColors } from '@/lib/custom-theme'
+import type { CustomTheme, InvitationFull, InvitationKind } from '@/lib/types'
 import { initialFormState } from '@/lib/validation'
 import { THEMES } from '@/themes'
 import { Icon } from '@/components/icons'
@@ -42,10 +43,23 @@ const PARENTS_LABEL: Record<InvitationKind, string> = {
   ultah_syukur: 'Keterangan keluarga (opsional)',
 }
 
-export function InvitationForm({ invitation, siteUrl }: { invitation?: InvitationFull; siteUrl: string }) {
+export type CustomThemeChoice = Pick<CustomTheme, 'id' | 'name' | 'base_theme' | 'colors' | 'description'>
+
+export function InvitationForm({
+  invitation,
+  siteUrl,
+  customThemes = [],
+}: {
+  invitation?: InvitationFull
+  siteUrl: string
+  customThemes?: CustomThemeChoice[]
+}) {
   const [state, action, pending] = useActionState(saveInvitationAction, initialFormState)
   const [kind, setKind] = useState<InvitationKind>(invitation?.kind ?? 'pernikahan')
-  const [theme, setTheme] = useState<ThemeName>(invitation?.theme ?? KINDS[kind].defaultTheme)
+  /** Nama tema bawaan, atau "custom:<id>" untuk tema kustom. */
+  const [theme, setTheme] = useState<string>(
+    invitation?.custom_theme_id ? `custom:${invitation.custom_theme_id}` : (invitation?.theme ?? KINDS[kind].defaultTheme),
+  )
   const [themeTouched, setThemeTouched] = useState(Boolean(invitation))
   const [events, setEvents] = useState<EventDraft[]>(() =>
     invitation
@@ -267,6 +281,46 @@ export function InvitationForm({ invitation, siteUrl }: { invitation?: Invitatio
                 </label>
               ))}
             </div>
+            {customThemes.length > 0 && (
+              <>
+                <p className="mt-4 mb-2 text-sm font-medium text-stone-700">Tema kustom</p>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {customThemes.map((t) => {
+                    const c = themeColors(t)
+                    const value = `custom:${t.id}`
+                    return (
+                      <label
+                        key={t.id}
+                        className="flex cursor-pointer items-start gap-3 rounded-lg border border-stone-200 p-3 has-checked:border-amber-600 has-checked:bg-amber-50"
+                      >
+                        <input
+                          type="radio"
+                          name="theme"
+                          value={value}
+                          checked={theme === value}
+                          onChange={() => {
+                            setTheme(value)
+                            setThemeTouched(true)
+                          }}
+                          className="mt-1"
+                        />
+                        <span className="min-w-0">
+                          <span className="flex items-center gap-2 font-medium">
+                            {t.name}
+                            <span aria-hidden className="flex">
+                              {[c.bg, c.surface, c.accent].map((x, i) => (
+                                <span key={i} className="-ml-1 size-4 rounded-full border border-stone-300 first:ml-0" style={{ background: x }} />
+                              ))}
+                            </span>
+                          </span>
+                          <span className="block text-sm text-stone-500">{t.description || `Berdasar tema ${THEMES[t.base_theme].label}`}</span>
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
+              </>
+            )}
             {e.theme && <p className="mt-1 text-sm text-red-600">{e.theme}</p>}
           </fieldset>
           <Field label="Zona waktu acara" error={e.timezone}>

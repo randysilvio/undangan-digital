@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { seeded } from '@/lib/seeded'
-import type { ThemeName } from '@/lib/types'
+import { cssUrl } from '@/lib/custom-theme'
+import type { ParticleMode, ThemeName } from '@/lib/types'
 
 const PETAL = <path d="M12 2C6.5 7.5 6.5 15 12 22c5.5-7 5.5-14.5 0-20z" fill="currentColor" />
 const LEAF = (
@@ -27,6 +28,8 @@ interface Preset {
   size: [number, number]
   duration: [number, number]
   opacity: number
+  /** shape berupa <img> dari tema kustom (bukan isi SVG). */
+  image?: boolean
 }
 
 const PRESETS: Partial<Record<ThemeName, Preset>> = {
@@ -39,9 +42,32 @@ const PRESETS: Partial<Record<ThemeName, Preset>> = {
 
 const lerp = ([a, b]: [number, number], t: number) => a + (b - a) * t
 
+const MODES: Record<Exclude<ParticleMode, 'tema' | 'mati'>, Preset['mode']> = { jatuh: 'fall', naik: 'rise', kelip: 'twinkle' }
+
+/** Pengaturan partikel dari tema kustom: mode gerak dan gambar sendiri (opsional). */
+export function resolvePreset(theme: ThemeName, custom?: { mode: ParticleMode; image?: string }): Preset | null {
+  const base = PRESETS[theme]
+  if (!custom) return base ?? null
+  if (custom.mode === 'mati') return null
+  const image = custom.image && cssUrl(custom.image) ? custom.image : null
+  const fallback: Preset = base ?? { mode: 'fall', count: 9, shape: PETAL, colors: ['var(--inv-accent)'], size: [10, 16], duration: [13, 20], opacity: 0.6 }
+  const mode = custom.mode === 'tema' ? fallback.mode : MODES[custom.mode]
+  if (!image) return { ...fallback, mode }
+  return {
+    ...fallback,
+    mode,
+    count: mode === 'twinkle' ? 14 : 10,
+    // eslint-disable-next-line @next/next/no-img-element -- gambar partikel kecil dari tema kustom
+    shape: <img src={image} alt="" />,
+    size: [16, 30],
+    opacity: 0.85,
+    image: true,
+  }
+}
+
 /** Partikel dekoratif per tema (kelopak, daun, balon, serbuk emas). Tema Modern sengaja polos. */
-export function Ambient({ theme }: { theme: ThemeName }) {
-  const p = PRESETS[theme]
+export function Ambient({ theme, custom }: { theme: ThemeName; custom?: { mode: ParticleMode; image?: string } }) {
+  const p = resolvePreset(theme, custom)
   if (!p) return null
   return (
     <div aria-hidden className="inv-ambient" data-mode={p.mode}>
@@ -61,7 +87,7 @@ export function Ambient({ theme }: { theme: ThemeName }) {
         } as CSSProperties
         return (
           <i key={i} style={style}>
-            <svg viewBox="0 0 24 24">{p.shape}</svg>
+            {p.image ? p.shape : <svg viewBox="0 0 24 24">{p.shape}</svg>}
           </i>
         )
       })}

@@ -15,7 +15,7 @@ export function normalizeInvitation(row: InvitationFull): InvitationFull {
   }
 }
 
-export const FULL_SELECT = '*, events(*), gallery:gallery_photos(*), gifts:gift_accounts(*)'
+export const FULL_SELECT = '*, events(*), gallery:gallery_photos(*), gifts:gift_accounts(*), custom_theme:custom_themes(*)'
 
 /** Undangan yang sudah terbit (RLS juga hanya mengizinkan yang terbit). */
 export const getPublishedInvitation = cache(async (slug: string): Promise<InvitationFull | null> => {

@@ -24,6 +24,18 @@ interface CoverGateProps {
   children: ReactNode
 }
 
+/** Hiasan sudut dari tema kustom (tersembunyi bila tema tidak punya gambar sudut). */
+function Corners() {
+  return (
+    <>
+      <span aria-hidden className="inv-corner inv-corner-tl" />
+      <span aria-hidden className="inv-corner inv-corner-tr" />
+      <span aria-hidden className="inv-corner inv-corner-bl" />
+      <span aria-hidden className="inv-corner inv-corner-br" />
+    </>
+  )
+}
+
 const step = (i: number) => ({ '--i': i }) as CSSProperties
 
 /** Sampul layar penuh. Scroll dikunci sampai tamu menekan "Buka Undangan", lalu musik diputar. */
@@ -66,8 +78,10 @@ export function CoverGate({ guestName, coupleName, label, motif, subtitle, dateL
           />
         )}
         <div aria-hidden className="absolute inset-0 -z-10" style={{ background: 'var(--inv-cover-overlay)' }} />
-        <div aria-hidden className="pointer-events-none absolute inset-3 rounded-[1.75rem] border border-white/30 sm:inset-5" />
-        <div aria-hidden className="pointer-events-none absolute inset-5 rounded-[1.4rem] border border-white/15 sm:inset-7" />
+        <div aria-hidden className="inv-default-frame pointer-events-none absolute inset-3 rounded-[1.75rem] border border-white/30 sm:inset-5" />
+        <div aria-hidden className="inv-default-frame pointer-events-none absolute inset-5 rounded-[1.4rem] border border-white/15 sm:inset-7" />
+        <div aria-hidden className="inv-cover-frame" />
+        <Corners />
 
         <div className="relative">
           {motif && (

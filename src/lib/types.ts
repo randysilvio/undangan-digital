@@ -41,6 +41,8 @@ export interface Invitation {
   /** Daftar keluarga, satu nama per baris. */
   family: string | null
   dress_code: string | null
+  /** Tema kustom (null = tema bawaan di kolom theme). */
+  custom_theme_id: string | null
   created_at: string
 }
 
@@ -107,6 +109,45 @@ export type InvitationFull = Invitation & {
   events: InvitationEvent[]
   gallery: GalleryPhoto[]
   gifts: GiftAccount[]
+  /** Hasil join; ada bila custom_theme_id terisi. */
+  custom_theme?: CustomTheme | null
+}
+
+export type ThemeColorKey = 'bg' | 'surface' | 'text' | 'muted' | 'accent' | 'on_accent' | 'line'
+export type ThemeFontRole = 'heading' | 'body' | 'names'
+export type ThemeSlot = 'cover_bg' | 'cover_frame' | 'corner' | 'texture' | 'garland' | 'ornament' | 'particle' | 'closing_bg'
+export type ParticleMode = 'tema' | 'jatuh' | 'naik' | 'kelip' | 'mati'
+
+/** Tema buatan admin: tema dasar + warna, huruf, dan gambar hiasan pilihan sendiri. */
+export interface CustomTheme {
+  id: string
+  slug: string
+  name: string
+  description: string | null
+  base_theme: ThemeName
+  colors: Partial<Record<ThemeColorKey, string>>
+  fonts: Partial<Record<ThemeFontRole, string>>
+  assets: Partial<Record<ThemeSlot, string>>
+  particles: ParticleMode
+  show_in_gallery: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface SitePackage {
+  name: string
+  price: string
+  features: string[]
+  highlight: boolean
+}
+
+/** Pengaturan halaman publik (kontak & paket). */
+export interface SiteSettings {
+  whatsapp: string | null
+  instagram: string | null
+  email: string | null
+  packages: SitePackage[]
+  show_credit: boolean
 }
 
 /** Rekap angka untuk halaman pantau mempelai (hasil fungsi database monitor_summary). */

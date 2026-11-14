@@ -5,6 +5,7 @@ import { PublishPanel } from '@/components/admin/PublishPanel'
 import { Notice } from '@/components/admin/ui'
 import { requireAdmin } from '@/lib/auth'
 import { getInvitation } from '@/lib/data/admin'
+import { themeChoices } from '@/lib/data/themes'
 import { SITE_URL } from '@/lib/supabase/env'
 
 export default function EditPage(props: PageProps<'/admin/[id]/edit'>) {
@@ -18,7 +19,7 @@ export default function EditPage(props: PageProps<'/admin/[id]/edit'>) {
 async function Edit({ params, searchParams }: PageProps<'/admin/[id]/edit'>) {
   const [{ id }, sp] = await Promise.all([params, searchParams])
   const { supabase } = await requireAdmin()
-  const inv = await getInvitation(supabase, id)
+  const [inv, customThemes] = await Promise.all([getInvitation(supabase, id), themeChoices(supabase)])
   if (!inv) notFound()
   return (
     <div className="space-y-6">
@@ -26,7 +27,7 @@ async function Edit({ params, searchParams }: PageProps<'/admin/[id]/edit'>) {
         <Notice kind="ok">Undangan dibuat sebagai draft. Lanjutkan dengan foto & rekening di tab “Media & Amplop”.</Notice>
       )}
       <PublishPanel id={inv.id} status={inv.status} />
-      <InvitationForm invitation={inv} siteUrl={SITE_URL} />
+      <InvitationForm invitation={inv} siteUrl={SITE_URL} customThemes={customThemes} />
     </div>
   )
 }

@@ -42,7 +42,7 @@ export async function getInvitation(sb: SupabaseClient, id: string): Promise<Inv
   return data ? normalizeInvitation(data as InvitationFull) : null
 }
 
-export async function saveInvitation(sb: SupabaseClient, input: InvitationInput & { story?: StoryInput[] }, id?: string): Promise<Result<{ id: string }>> {
+export async function saveInvitation(sb: SupabaseClient, input: InvitationInput & { story?: StoryInput[]; custom_theme_id?: string | null }, id?: string): Promise<Result<{ id: string }>> {
   const query = id ? sb.from('invitations').update(input).eq('id', id) : sb.from('invitations').insert(input)
   const { data, error } = await query.select('id').single()
   return error ? fail(error) : ok({ id: data.id as string })
@@ -175,7 +175,7 @@ export async function duplicateInvitation(sb: SupabaseClient, id: string): Promi
   const { data: taken } = await sb.from('invitations').select('slug').like('slug', `${base}%`)
   const slug = nextAvailableSlug(base, (taken ?? []).map((r) => r.slug as string))
 
-  const copy = withoutKeys(src, ['id', 'created_at', 'events', 'gallery', 'gifts'])
+  const copy = withoutKeys(src, ['id', 'created_at', 'events', 'gallery', 'gifts', 'custom_theme'])
   const { data, error } = await sb.from('invitations').insert({ ...copy, slug, status: 'draft' }).select('id').single()
   if (error) return fail(error)
   const newId = data.id as string
